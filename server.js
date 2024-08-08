@@ -1,27 +1,30 @@
 const express = require('express');
-const app = express();
 const path = require('path');
 const fs = require('fs');
+const app = express();
+const port = 3000;
 
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
+// Endpoint to list audio files
 app.get('/audio-files', (req, res) => {
-  const audioDir = path.join(__dirname, 'public', 'audio');
-  fs.readdir(audioDir, (err, files) => {
-    if (err) {
-      res.status(500).send('Error reading audio files');
-    } else {
-      const audioFiles = files.filter(file => path.extname(file) === '.mp3');
-      res.json(audioFiles);
-    }
-  });
+    const audioDir = path.join(__dirname, 'public', 'audio');
+    const folders = ['basics', 'combos', 'advanced'];
+    const files = {};
+
+    folders.forEach(folder => {
+        const folderPath = path.join(audioDir, folder);
+        if (fs.existsSync(folderPath)) {
+            files[folder] = fs.readdirSync(folderPath).filter(file => file.endsWith('.mp3'));
+        } else {
+            files[folder] = [];
+        }
+    });
+
+    res.json(files);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
