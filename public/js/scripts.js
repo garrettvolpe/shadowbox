@@ -98,6 +98,7 @@ function startRounds(rounds, roundTime, restTime, timer) {
                         currentAudio.pause();
                         currentAudio.currentTime = 0;
                     }
+                    stopMusic(); // Stop music on pause
                     document.getElementById('pause-button').classList.add('hidden');
                     document.getElementById('resume-button').classList.add('hidden');
                     document.getElementById('stop-button').classList.add('hidden');
@@ -114,6 +115,7 @@ function startRounds(rounds, roundTime, restTime, timer) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
         }
+        stopMusic(); // Stop music on pause
     
         // Display the rest countdown timer
         timer.classList.add("hidden")
