@@ -86,6 +86,52 @@ button:active {
   font-weight: bold;
 }
 
+/* Rest of your CSS remains unchanged */
+
+.music-control {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-control label {
+  margin-right: 10px;
+  color: #007bff; /* Bright blue for consistency */
+  font-weight: bold;
+}
+
+.music-control input[type="checkbox"] {
+  width: 50px;
+  height: 25px;
+  cursor: pointer;
+  appearance: none;
+  background: #ddd;
+  border-radius: 15px;
+  position: relative;
+  outline: none;
+}
+
+.music-control input[type="checkbox"]:checked {
+  background: #007bff; /* Blue when checked */
+}
+
+.music-control input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.3s ease;
+  transform: translateX(2px);
+}
+
+.music-control input[type="checkbox"]:checked::before {
+  transform: translateX(25px); /* Move to the right when checked */
+}
+
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .container {

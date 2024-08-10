@@ -2,6 +2,8 @@ document.getElementById('start-button').addEventListener('click', startWorkout);
 document.getElementById('pause-button').addEventListener('click', pauseWorkout);
 document.getElementById('resume-button').addEventListener('click', resumeWorkout);
 document.getElementById('stop-button').addEventListener('click', stopWorkout);
+document.getElementById('music-toggle').addEventListener('change', toggleMusic);
+
 
 let countdownInterval;
 let roundTimeout;
@@ -16,6 +18,8 @@ let audioFiles = {
 let lastFolder = '';
 let paused = false;
 let pausedTime = 0;
+let musicPlaying = false;
+
 
 function startWorkout() {
     const rounds = document.getElementById('rounds').value;
@@ -49,9 +53,13 @@ function startWorkout() {
 
 function startRounds(rounds, roundTime, restTime, timer) {
     let currentRound = 1;
+    
 
     function startRound() {
         timer.classList.remove('hidden')
+        if (document.getElementById('music-toggle').checked) {
+            playMusic();
+        }
         playAudio('audio/misc/bell_start.mp3');
         let timeLeft;
         if (paused) {
@@ -151,6 +159,8 @@ function pauseWorkout() {
 
     const timerText = document.getElementById('timer').textContent;
     console.log(timerText);
+    stopMusic(); // Stop music on pause
+
 
     // Extract the round time in minutes and seconds from the timer text
     const parts = timerText.split(':');
@@ -175,6 +185,32 @@ function resumeWorkout() {
     document.getElementById('pause-button').classList.remove('hidden');
     document.getElementById('resume-button').classList.add('hidden');
 }
+
+function playMusic() {
+    if (musicPlaying) return; // Prevent starting multiple instances
+    musicAudio = new Audio('audio/music.mp3'); // Replace with your music file path
+    musicAudio.loop = true;
+    musicAudio.play();
+    musicPlaying = true;
+}
+
+function stopMusic() {
+    if (!musicPlaying) return;
+    musicAudio.pause();
+    musicAudio.currentTime = 0;
+    musicPlaying = false;
+}
+
+
+function toggleMusic() {
+    const musicToggle = document.getElementById('music-toggle');
+    if (musicToggle.checked) {
+        playMusic();
+    } else {
+        stopMusic();
+    }
+}
+
 
 function playRandomAudio() {
     const folder = selectFolder();
@@ -215,10 +251,14 @@ function stopWorkout() {
     clearTimeout(roundTimeout);
     clearTimeout(audioTimeout);
     clearTimeout(restTimeout);
+
     if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
     }
+
+    stopMusic(); // Ensure music is stopped
+
     document.getElementById('countdown').classList.add('hidden');
     document.getElementById('timer').classList.add('hidden');
     document.getElementById('rest-countdown').classList.add('hidden'); // Hide rest countdown
