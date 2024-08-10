@@ -85,6 +85,11 @@ function startRounds(rounds, roundTime, restTime, timer) {
                     clearTimeout(audioTimeout);
                     playAudio('audio/misc/bell_end.mp3');
                     timer.textContent = 'Workout Complete!';
+                    clearTimeout(audioTimeout);
+                    if (currentAudio) {
+                        currentAudio.pause();
+                        currentAudio.currentTime = 0;
+                    }
                     document.getElementById('pause-button').classList.add('hidden');
                     document.getElementById('resume-button').classList.add('hidden');
                     document.getElementById('stop-button').classList.add('hidden');
