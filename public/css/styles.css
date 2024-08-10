@@ -19,7 +19,7 @@ body {
     display: none;
   }
   
-  #countdown, #timer {
+  #countdown, #timer, #rest-countdown {
     font-size: 2em;
     margin-top: 20px;
   }

@@ -51,6 +51,7 @@ function startRounds(rounds, roundTime, restTime, timer) {
     let currentRound = 1;
 
     function startRound() {
+        timer.classList.remove('hidden')
         playAudio('audio/misc/bell_start.mp3');
         let timeLeft;
         if (paused) {
@@ -60,7 +61,6 @@ function startRounds(rounds, roundTime, restTime, timer) {
         }
         
         paused = false; // Reset the paused state since the workout is now active
-        paused = false;
 
         function updateTimer() {
             if (timeLeft > 0) {
@@ -70,11 +70,20 @@ function startRounds(rounds, roundTime, restTime, timer) {
                 console.log(timeLeft)
             } else {
                 playAudio('audio/misc/bell_end.mp3');
+                clearTimeout(audioTimeout);
+                playAudio('audio/misc/bell_end.mp3');
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
                 if (currentRound < rounds) {
                     currentRound++;
                     timer.textContent = `Rest Time: ${Math.floor(restTime / 60)}:${restTime % 60 < 10 ? '0' : ''}${restTime % 60}`;
                     startRest(restTime);
                 } else {
+                    playAudio('audio/misc/bell_end.mp3');
+                    clearTimeout(audioTimeout);
+                    playAudio('audio/misc/bell_end.mp3');
                     timer.textContent = 'Workout Complete!';
                     document.getElementById('pause-button').classList.add('hidden');
                     document.getElementById('resume-button').classList.add('hidden');
@@ -87,15 +96,30 @@ function startRounds(rounds, roundTime, restTime, timer) {
         scheduleNextAudio();
     }
 
-    function startRest(restTime) {
+    function startRest() {
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
         }
-
-        restTimeout = setTimeout(() => {
-            startRound();
-        }, restTime * 1000);
+    
+        // Display the rest countdown timer
+        timer.classList.add("hidden")
+        const restCountdown = document.getElementById('rest-countdown');
+        restCountdown.classList.remove('hidden');
+        let restTimeLeft = restTime;
+    
+        function updateRestTimer() {
+            if (restTimeLeft > 0) {
+                restCountdown.textContent = `Rest Time: ${Math.floor(restTimeLeft / 60)}:${restTimeLeft % 60 < 10 ? '0' : ''}${restTimeLeft % 60}`;
+                restTimeLeft--;
+                restTimeout = setTimeout(updateRestTimer, 1000);
+            } else {
+                restCountdown.classList.add('hidden');
+                startRound();
+            }
+        }
+    
+        updateRestTimer();
     }
 
     function scheduleNextAudio() {
@@ -192,12 +216,14 @@ function stopWorkout() {
     }
     document.getElementById('countdown').classList.add('hidden');
     document.getElementById('timer').classList.add('hidden');
+    document.getElementById('rest-countdown').classList.add('hidden'); // Hide rest countdown
     document.getElementById('pause-button').classList.add('hidden');
     document.getElementById('resume-button').classList.add('hidden');
     document.getElementById('stop-button').classList.add('hidden');
     document.getElementById('timer').textContent = '';
     paused = false;
     pausedTime = 0;
+    currentRound = 1;
 }
 
 fetch('/audio-files')
