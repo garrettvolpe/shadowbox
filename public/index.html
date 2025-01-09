@@ -6,30 +6,45 @@
   <link rel="stylesheet" href="css/styles.css">
   <title>Shadowboxing Timer</title>
 </head>
+
+<nav class="index-nav-bar">
+  <ul>
+    <li><img class="nav-icon" src="/public/images/fullscreen.png"></li>
+    <li><img class="nav-icon" src="/public/images/dark-mode-icon.png"></li>
+    <li></li>
+  </ul>
+  
+</nav>
 <body>
-  <div class="container">
-    <h1>Shadowbox Timer</h1>
-    <div class="settings">
-      <label for="rounds">Rounds:</label>
-      <input type="number" id="rounds" value="3" min="1">
-      <label for="duration">Round Duration (minutes):</label>
-      <input type="number" id="round-time" min="1" value="3">
-      <label for="rest-time">Rest Time (minutes):</label>
-      <input type="number" id="rest-time" min="1" value="1">
-    <div class="music-control">
-      <label for="music-toggle">Background Music:</label>
-      <input type="checkbox" id="music-toggle" checked>
+  <div class="config-container">
+  <div class="row">
+      <div class="container container-style collumn">
+        <a href="pages\config.html"><img id="setting-icon" src="images\settings.png"></a>
+        <h1 class="title-style">Shadowbox Timer</h1>
+        <h6 class="label-style">Developed by Happy Ending Coding</h6>
+      </div>
+
+      <div class="container container-style column">
+        <div class="timer-div">
+          <label><span class="label-style timer-format">3:00</span></label>
+      </div>
+      <button id="start-button">Start</button>
+      <button id="stop-button" >Stop</button>
+      <button id="pause-button">Pause</button>
+      <button id="resume-button">Resume</button>
+      <div id="countdown" class="hidden">Get Ready</div>
+      
+      <div id="rest-countdown" class="hidden"></div>
     </div>
     </div>
-    <button id="start-button">Start</button>
-    <button id="stop-button" class="hidden">Stop</button>
-    <button id="pause-button" class="hidden">Pause</button>
-    <button id="resume-button" class="hidden">Resume</button>
-    <div id="countdown" class="hidden">Get Ready</div>
-    <div id="timer" class="hidden"></div>
-    <div id="rest-countdown" class="hidden"></div>
+    <div class="row">
+      <div class="container-style column">
+         <h5 class="label-style">Copyright @ 2025</h5>
+      </div>
   </div>
+</div>
 
   <script src="js/scripts.js"></script>
 </body>
-</html>
+
+
