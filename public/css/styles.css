@@ -51,7 +51,7 @@ body {
 
 .container-style {
   text-align: center;
-  background: #ffffff; /* White background for the container */
+  background-color: #ffffff;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
@@ -302,7 +302,13 @@ footer {
 
 
 
-
+/*Dark Mode Style*/
+body.dark-mode {
+  background-color: #232b2b;
+}
+ .dark-mode {
+  background-color: #353839;  
+ }
 
 
 
@@ -321,7 +327,7 @@ footer {
 
 
 /* Responsive Design */
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .container {
     width: 90%;
     padding: 20px;
@@ -338,5 +344,12 @@ footer {
   
   #countdown, #timer, #rest-countdown {
     font-size: 2.5em;
+  }
+
+  .row {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
   }
 }
