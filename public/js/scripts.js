@@ -254,6 +254,7 @@ function resumeWorkout() {
      showElement(pauseButton);
      hideElement(resumeButton);
      hideElement(settingsContainer);
+     showElement(startButton)
 
      startRounds(rounds, pausedTime, restTime)
 }
