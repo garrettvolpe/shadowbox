@@ -19,9 +19,9 @@ function toggleDarkMode() {
 
 function changeImg(){
    if(isDarkModeEnabled == true){
-      document.getElementById("toggle-dark-mode").src = "/public/images/light-mode.png";
+      document.getElementById("toggle-dark-mode").src = "/images/light-mode.png";
    }
    else if(isDarkModeEnabled == false){
-      document.getElementById("toggle-dark-mode").src="/public/images/dark-mode.png";
+      document.getElementById("toggle-dark-mode").src="/images/dark-mode.png";
    }
 }
