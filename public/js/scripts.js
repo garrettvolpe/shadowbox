@@ -225,29 +225,37 @@ function pauseWorkout() {
     clearTimeout(restTimeout);
     stopAudio();
     stopMusic();
-    const timerText = document.getElementById('timer').textContent;
+    const timerText = document.getElementById('timer-display').textContent;
       const parts = timerText.split(':');
     const minutes = parseInt(parts[1].replace(/[^\d]/g, ''));
     const seconds = parseInt(parts[2]);
     pausedTime = minutes * 60 + seconds;
-
-
     hideElement(pauseButton);
     showElement(resumeButton);
+
 }
 
 function resumeWorkout() {
     paused = false;
       if (timerDisplay) {
-         const timerText = timerDisplay.textContent;
+        const timerText = document.getElementById('timer-display').textContent;
         const parts = timerText.split(':');
-        const minutes = parseInt(parts[1].replace(/[^\d]/g, ''));
-        const seconds = parseInt(parts[2]);
+        const minutes = parseInt(parts[0].replace(/[^\d]/g, ''));
+        const seconds = parseInt(parts[1]);
         pausedTime = minutes * 60 + seconds;
      }
-     startWorkout();
+     const rounds = document.getElementById('rounds').value;
+     const restTime = document.getElementById('rest-time').value * 60 || 60; // Default rest time of 1 minute
+     let count = INITIAL_COUNTDOWN_TIME;
+     
+     // Display starting UI
+     hideElement(countdownDisplay);
+     showElement(stopButton);
      showElement(pauseButton);
      hideElement(resumeButton);
+     hideElement(settingsContainer);
+
+     startRounds(rounds, pausedTime, restTime)
 }
 
 function playMusic() {
