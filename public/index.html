@@ -10,22 +10,23 @@
 
 <nav class="index-nav-bar">
   <ul>
-    <li><img class="nav-icon" src="/images/fullscreen.png"></li>
-    <li><img class="nav-icon" src="/images/dark-mode-icon.png"></li>
+    <li><img class="nav-icon" src="/public/images/fullscreen.png"></li>
+    <li><img id="toggle-dark-mode" class="nav-icon" src="/public/images/dark-mode-icon.png"></li>
     <li></li>
   </ul>
   
 </nav>
-<body>
+<body id="body">
   <div class="config-container">
   <div class="row">
-      <div class="container container-style collumn">
-        <img id="setting-icon" src="images\settings.png">
+    <!--Left Container-->
+      <div id="left-container" class="container container-style collumn">
+        <a href="/public/pages/config.html"><img id="setting-icon" src="images\settings.png"></a>
         <h1 class="title-style">Shadowbox Timer</h1>
         <h6 class="label-style">Developed by Happy Ending Coding</h6>
       </div>
-
-      <div class="container container-style column">
+    <!--Right Container-->
+      <div id="right-container" class="container container-style column">
         <div class="timer-div">
           <label><span id="timer-display" class="label-style timer-format">3:00</span></label>
       </div>
@@ -39,6 +40,7 @@
     </div>
     </div>
     <div class="row">
+    
          <div class="container-style column hidden" id="settings-container">
              <h2 class="label-style">Settings</h2>
             <div class="timer-settings">
@@ -60,15 +62,16 @@
                     <span class="slider round"></span>
                 </label>
               </div>
-          </div>
+          </div> 
       </div>
     <div class="row">
-      <div class="container-style column">
+      <div id="footer-container" class="container-style column">
          <h5 class="label-style">Copyright @ 2025</h5>
       </div>
   </div>
 </div>
 
   <script src="js/scripts.js"></script>
+  <script src="js/darkMode.js"></script>
 </body>
 </html>
