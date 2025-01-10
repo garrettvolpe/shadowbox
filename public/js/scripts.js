@@ -2,7 +2,6 @@
 const ONE_SECOND = 1000;
 const INITIAL_COUNTDOWN_TIME = 3;
 
-
 // UI Elements Cache
 const startButton = document.getElementById('start-button');
 const pauseButton = document.getElementById('pause-button');
@@ -16,7 +15,6 @@ const settingIcon = document.getElementById('setting-icon');
 const settingsContainer = document.getElementById('settings-container');
 const roundTimeInput = document.getElementById('round-time');
 const initialTimerDisplay = document.querySelector('.timer-format');
-
 
 // Global Variables (Use with Care)
 let countdownInterval;
@@ -34,7 +32,7 @@ let paused = false;
 let pausedTime = 0;
 let musicPlaying = false;
 let musicAudio;
-
+let currentRound = 1;
 
 // Event listeners
 startButton.addEventListener('click', startWorkout);
@@ -52,6 +50,7 @@ function formatTime(seconds) {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
+
 function showElement(element) {
      if (element) {
          element.classList.remove('hidden');
@@ -108,9 +107,23 @@ function startWorkout() {
     }, ONE_SECOND);
 }
 
+function resumeWorkout() {
+    paused = false;
+    if (timerDisplay) {
+        const timerText = timerDisplay.textContent;
+        const parts = timerText.split(':');
+        const minutes = parseInt(parts[0].replace(/[^\d]/g, ''));
+        const seconds = parseInt(parts[1].replace(/[^\d]/g, ''));
+        pausedTime = minutes * 60 + seconds;
+    }
+
+    startRound(pausedTime);
+    showElement(pauseButton);
+    hideElement(resumeButton);
+}
+
 // Main function that manages rounds
 async function startRounds(rounds, roundTime, restTime) {
-    let currentRound = 1;
 
     async function startRound() {
         if (timerDisplay) {
@@ -185,7 +198,6 @@ async function startRounds(rounds, roundTime, restTime) {
         updateRestTimer();
     }
 
-
      function scheduleNextAudio() {
         const randomDelay = Math.random() * 1500 + 1000;
         audioTimeout = setTimeout(() => {
@@ -196,7 +208,6 @@ async function startRounds(rounds, roundTime, restTime) {
         }, randomDelay);
     }
 
-
     startRound();
 }
 
@@ -206,6 +217,9 @@ function generateAudioPath(file) {
 
 function pauseWorkout() {
     paused = true;
+    hideElement(startButton);
+    hideElement(pauseButton);
+    showElement(resumeButton);
     clearTimeout(roundTimeout);
     clearTimeout(audioTimeout);
     clearTimeout(restTimeout);
@@ -224,10 +238,16 @@ function pauseWorkout() {
 
 function resumeWorkout() {
     paused = false;
-    startRounds(document.getElementById('rounds').value, pausedTime, document.getElementById('rest-time').value * 60 || 60);
-    showElement(pauseButton);
-    hideElement(resumeButton);
-
+      if (timerDisplay) {
+         const timerText = timerDisplay.textContent;
+        const parts = timerText.split(':');
+        const minutes = parseInt(parts[1].replace(/[^\d]/g, ''));
+        const seconds = parseInt(parts[2]);
+        pausedTime = minutes * 60 + seconds;
+     }
+     startWorkout();
+     showElement(pauseButton);
+     hideElement(resumeButton);
 }
 
 function playMusic() {
@@ -288,7 +308,6 @@ function stopAudio(){
     }
 }
 
-
 function selectFolder() {
     const folders = ['basics', 'combos', 'advanced'];
     let folder = folders[Math.floor(Math.random() * folders.length)];
@@ -300,8 +319,6 @@ function selectFolder() {
     lastFolder = folder;
     return folder;
 }
-
-
 
 function stopWorkout() {
     clearInterval(countdownInterval);
