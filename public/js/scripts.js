@@ -1,15 +1,29 @@
-document.getElementById('start-button').addEventListener('click', startWorkout);
-document.getElementById('pause-button').addEventListener('click', pauseWorkout);
-document.getElementById('resume-button').addEventListener('click', resumeWorkout);
-document.getElementById('stop-button').addEventListener('click', stopWorkout);
-document.getElementById('music-toggle').addEventListener('change', toggleMusic);
+// Constants for time calculations (in milliseconds)
+const ONE_SECOND = 1000;
+const INITIAL_COUNTDOWN_TIME = 3;
 
 
+// UI Elements Cache
+const startButton = document.getElementById('start-button');
+const pauseButton = document.getElementById('pause-button');
+const resumeButton = document.getElementById('resume-button');
+const stopButton = document.getElementById('stop-button');
+const musicToggle = document.getElementById('music-toggle');
+const countdownDisplay = document.getElementById('countdown');
+const timerDisplay = document.getElementById('timer-display');
+const restCountdownDisplay = document.getElementById('rest-countdown');
+const settingIcon = document.getElementById('setting-icon');
+const settingsContainer = document.getElementById('settings-container');
+const roundTimeInput = document.getElementById('round-time');
+const initialTimerDisplay = document.querySelector('.timer-format');
+
+
+// Global Variables (Use with Care)
 let countdownInterval;
 let roundTimeout;
 let audioTimeout;
-let currentAudio;
 let restTimeout;
+let currentAudio;
 let audioFiles = {
     basics: [],
     combos: [],
@@ -19,125 +33,160 @@ let lastFolder = '';
 let paused = false;
 let pausedTime = 0;
 let musicPlaying = false;
+let musicAudio;
 
 
-function startWorkout() {
-    const rounds = document.getElementById('rounds').value;
-    const roundTime = document.getElementById('round-time').value * 60;
-    const restTime = document.getElementById('rest-time').value * 60 || 60;
-    const countdown = document.getElementById('countdown');
-    const timer = document.getElementById('timer');
-    const stopButton = document.getElementById('stop-button');
-    const pauseButton = document.getElementById('pause-button');
-    const resumeButton = document.getElementById('resume-button');
+// Event listeners
+startButton.addEventListener('click', startWorkout);
+pauseButton.addEventListener('click', pauseWorkout);
+resumeButton.addEventListener('click', resumeWorkout);
+stopButton.addEventListener('click', stopWorkout);
+musicToggle.addEventListener('change', toggleMusic);
+settingIcon.addEventListener('click', toggleSettings);
+roundTimeInput.addEventListener('change', updateInitialTimerDisplay); // Add event listener for round time changes
 
-    countdown.classList.remove('hidden');
-    stopButton.classList.remove('hidden');
-    pauseButton.classList.remove('hidden');
-    resumeButton.classList.add('hidden'); // Ensure resume button is hidden initially
-    paused = false;
-    pausedTime = 0;
-    let count = 3;
 
-    countdownInterval = setInterval(() => {
-        countdown.textContent = count;
-        if (count === 0) {
-            clearInterval(countdownInterval);
-            countdown.classList.add('hidden');
-            timer.classList.remove('hidden');
-            startRounds(rounds, roundTime, restTime, timer);
-        }
-        count--;
-    }, 1000);
+//Helper functions
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
+function showElement(element) {
+     if (element) {
+         element.classList.remove('hidden');
+    }
 }
 
-function startRounds(rounds, roundTime, restTime, timer) {
-    let currentRound = 1;
-    
+function hideElement(element) {
+    if (element) {
+       element.classList.add('hidden');
+    }
+}
 
-    function startRound() {
-        timer.classList.remove('hidden')
-        if (document.getElementById('music-toggle').checked) {
+function playAudioFile(audioPath) {
+    currentAudio = new Audio(audioPath);
+    currentAudio.onerror = () => console.error(`Error loading audio file: ${audioPath}`);
+    currentAudio.play();
+}
+function updateInitialTimerDisplay() {
+    const roundTimeValue = parseInt(roundTimeInput.value);
+    initialTimerDisplay.textContent = formatTime(roundTimeValue * 60); // Set initial timer display to the round time
+}
+
+// Start workout function
+function startWorkout() {
+    const rounds = document.getElementById('rounds').value;
+    const roundTime = parseInt(document.getElementById('round-time').value) * 60;  //Get latest user input
+    const restTime = document.getElementById('rest-time').value * 60 || 60; // Default rest time of 1 minute
+    let count = INITIAL_COUNTDOWN_TIME;
+    
+    // Display starting UI
+    showElement(countdownDisplay);
+    showElement(stopButton);
+    showElement(pauseButton);
+    hideElement(resumeButton);
+    hideElement(settingsContainer);
+    
+    paused = false;
+    pausedTime = 0; // Reset paused time
+
+    playAudioFile(generateAudioPath('misc/bell_start.mp3'))
+
+    countdownInterval = setInterval(() => {
+        countdownDisplay.textContent = count;
+        if (count === 0) {
+            clearInterval(countdownInterval);
+            hideElement(countdownDisplay);
+             startRounds(rounds, roundTime, restTime);
+             if(timerDisplay) {
+                 showElement(timerDisplay);
+             }
+
+        }
+        count--;
+    }, ONE_SECOND);
+}
+
+// Main function that manages rounds
+async function startRounds(rounds, roundTime, restTime) {
+    let currentRound = 1;
+
+    async function startRound() {
+        if (timerDisplay) {
+            showElement(timerDisplay);
+        }
+    
+        if (musicToggle.checked && !musicPlaying) {
             playMusic();
         }
-        playAudio('audio/misc/bell_start.mp3');
+    
         let timeLeft;
-        if (paused) {
-            timeLeft = pausedTime; // Resume from where it was paused
-        } else {
-            timeLeft = roundTime; // Start with the full round time
-        }
-        
-        paused = false; // Reset the paused state since the workout is now active
+         if (paused) {
+            timeLeft = pausedTime;
+            paused = false;
 
-        function updateTimer() {
+        } else {
+           timeLeft = roundTime;
+        }
+        updateTimer(timeLeft, currentRound);
+
+      function updateTimer(timeLeft, currentRound){
             if (timeLeft > 0) {
-                timer.textContent = `Round ${currentRound}: ${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? '0' : ''}${timeLeft % 60}`;
-                timeLeft--;
-                roundTimeout = setTimeout(updateTimer, 1000);
-                console.log(timeLeft)
+               if(timerDisplay){
+                 timerDisplay.textContent = `${formatTime(timeLeft)}`;
+               }
+               timeLeft--;
+               roundTimeout = setTimeout(() => updateTimer(timeLeft, currentRound), ONE_SECOND);
             } else {
-                playAudio('audio/misc/bell_end.mp3');
-                clearTimeout(audioTimeout);
-                playAudio('audio/misc/bell_end.mp3');
-                if (currentAudio) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                }
+              playAudioFile(generateAudioPath('misc/bell_end.mp3'));
+              stopAudio();
                 if (currentRound < rounds) {
                     currentRound++;
-                    timer.textContent = `Rest Time: ${Math.floor(restTime / 60)}:${restTime % 60 < 10 ? '0' : ''}${restTime % 60}`;
+                    if(timerDisplay){
+                      timerDisplay.textContent = `Rest Time: ${formatTime(restTime)}`;
+                    }
                     startRest(restTime);
                 } else {
-                    playAudio('audio/misc/bell_end.mp3');
-                    clearTimeout(audioTimeout);
-                    playAudio('audio/misc/bell_end.mp3');
-                    timer.textContent = 'Workout Complete!';
-                    clearTimeout(audioTimeout);
-                    if (currentAudio) {
-                        currentAudio.pause();
-                        currentAudio.currentTime = 0;
+                  playAudioFile(generateAudioPath('misc/bell_end.mp3'));
+                  stopAudio();
+                    if(timerDisplay){
+                       timerDisplay.textContent = 'Workout Complete!';
                     }
-                    stopMusic(); // Stop music on pause
-                    document.getElementById('pause-button').classList.add('hidden');
-                    document.getElementById('resume-button').classList.add('hidden');
-                    document.getElementById('stop-button').classList.add('hidden');
+                  stopMusic();
+                  hideElement(pauseButton);
+                  hideElement(resumeButton);
+                  hideElement(stopButton);
                 }
-            }
+           }
         }
-
-        updateTimer();
         scheduleNextAudio();
-    }
+      }
 
-    function startRest() {
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-        }
-        stopMusic(); // Stop music on pause
-    
-        // Display the rest countdown timer
-        timer.classList.add("hidden")
-        const restCountdown = document.getElementById('rest-countdown');
-        restCountdown.classList.remove('hidden');
+
+    function startRest(restTime) {
+         stopAudio();
+         stopMusic();
+
+        hideElement(timerDisplay);
+        showElement(restCountdownDisplay);
         let restTimeLeft = restTime;
-    
-        function updateRestTimer() {
+
+        function updateRestTimer(){
             if (restTimeLeft > 0) {
-                restCountdown.textContent = `Rest Time: ${Math.floor(restTimeLeft / 60)}:${restTimeLeft % 60 < 10 ? '0' : ''}${restTimeLeft % 60}`;
-                restTimeLeft--;
-                restTimeout = setTimeout(updateRestTimer, 1000);
+                restCountdownDisplay.textContent = `Rest Time: ${formatTime(restTimeLeft)}`;
+                 restTimeLeft--;
+                 restTimeout = setTimeout(updateRestTimer, ONE_SECOND);
             } else {
-                restCountdown.classList.add('hidden');
+                hideElement(restCountdownDisplay);
                 startRound();
             }
         }
-    
         updateRestTimer();
     }
 
-    function scheduleNextAudio() {
+
+     function scheduleNextAudio() {
         const randomDelay = Math.random() * 1500 + 1000;
         audioTimeout = setTimeout(() => {
             if (!currentAudio || currentAudio.paused) {
@@ -147,7 +196,12 @@ function startRounds(rounds, roundTime, restTime, timer) {
         }, randomDelay);
     }
 
+
     startRound();
+}
+
+function generateAudioPath(file) {
+    return `audio/${file}`;
 }
 
 function pauseWorkout() {
@@ -155,45 +209,37 @@ function pauseWorkout() {
     clearTimeout(roundTimeout);
     clearTimeout(audioTimeout);
     clearTimeout(restTimeout);
-    if (currentAudio) {
-        currentAudio.pause();
-    }
-
+    stopAudio();
+    stopMusic();
     const timerText = document.getElementById('timer').textContent;
-    console.log(timerText);
-    stopMusic(); // Stop music on pause
-
-
-    // Extract the round time in minutes and seconds from the timer text
-    const parts = timerText.split(':');
-    console.log(parts)
-    const minutes = parseInt(parts[1].replace(/[^\d]/g, '')); // Extract only the digits from the minutes part
-    console.log(minutes)
+      const parts = timerText.split(':');
+    const minutes = parseInt(parts[1].replace(/[^\d]/g, ''));
     const seconds = parseInt(parts[2]);
-    console.log (seconds)
-    // Convert the entire time to seconds
     pausedTime = minutes * 60 + seconds;
-    console.log(pausedTime);
 
-    // Show the resume button and hide the pause button
-    document.getElementById('pause-button').classList.add('hidden');
-    document.getElementById('resume-button').classList.remove('hidden');
+
+    hideElement(pauseButton);
+    showElement(resumeButton);
 }
+
 function resumeWorkout() {
     paused = false;
-    startRounds(document.getElementById('rounds').value, pausedTime, document.getElementById('rest-time').value * 60 || 60, document.getElementById('timer'));
+    startRounds(document.getElementById('rounds').value, pausedTime, document.getElementById('rest-time').value * 60 || 60);
+    showElement(pauseButton);
+    hideElement(resumeButton);
 
-    // Show the pause button and hide the resume button
-    document.getElementById('pause-button').classList.remove('hidden');
-    document.getElementById('resume-button').classList.add('hidden');
 }
 
 function playMusic() {
-    if (musicPlaying) return; // Prevent starting multiple instances
+    if (musicPlaying) return;
     musicAudio = new Audio('audio/music.mp3'); // Replace with your music file path
     musicAudio.loop = true;
-    musicAudio.play();
-    musicPlaying = true;
+    musicAudio.addEventListener('canplaythrough', () => {
+        musicAudio.play().catch(error => console.error('Music playback error:', error));
+        musicPlaying = true;
+    });
+    musicAudio.onerror = () => console.error('Error loading music audio.');
+     musicAudio.load();
 }
 
 function stopMusic() {
@@ -203,14 +249,21 @@ function stopMusic() {
     musicPlaying = false;
 }
 
-
 function toggleMusic() {
-    const musicToggle = document.getElementById('music-toggle');
     if (musicToggle.checked) {
-        playMusic();
+         if (!musicPlaying) playMusic();
     } else {
         stopMusic();
     }
+}
+
+function toggleSettings(){
+    if(settingsContainer && settingsContainer.classList.contains('hidden')){
+        showElement(settingsContainer)
+    } else if(settingsContainer){
+        hideElement(settingsContainer);
+    }
+
 }
 
 
@@ -218,18 +271,23 @@ function playRandomAudio() {
     const folder = selectFolder();
     const files = audioFiles[folder];
 
-    console.log(`Selected folder: ${folder}`);
-    console.log(`Files in selected folder:`, files);
-
     if (!files || files.length === 0) {
         console.error(`No audio files found for folder: ${folder}`);
         return;
     }
 
     const randomIndex = Math.floor(Math.random() * files.length);
-    currentAudio = new Audio(`audio/${folder}/${files[randomIndex]}`);
-    currentAudio.play();
+    const audioPath = `audio/${folder}/${files[randomIndex]}`;
+    playAudioFile(audioPath);
 }
+
+function stopAudio(){
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+}
+
 
 function selectFolder() {
     const folders = ['basics', 'combos', 'advanced'];
@@ -243,40 +301,32 @@ function selectFolder() {
     return folder;
 }
 
-function playAudio(audioPath) {
-    currentAudio = new Audio(audioPath);
-    currentAudio.play();
-}
+
 
 function stopWorkout() {
     clearInterval(countdownInterval);
     clearTimeout(roundTimeout);
     clearTimeout(audioTimeout);
     clearTimeout(restTimeout);
+    stopAudio();
+    stopMusic();
 
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-    }
+    hideElement(countdownDisplay);
+    showElement(timerDisplay);
+    hideElement(restCountdownDisplay);
+    hideElement(pauseButton);
+    hideElement(resumeButton);
+    hideElement(stopButton);
+    showElement(startButton);
+    updateInitialTimerDisplay();
 
-    stopMusic(); // Ensure music is stopped
-
-    document.getElementById('countdown').classList.add('hidden');
-    document.getElementById('timer').classList.add('hidden');
-    document.getElementById('rest-countdown').classList.add('hidden'); // Hide rest countdown
-    document.getElementById('pause-button').classList.add('hidden');
-    document.getElementById('resume-button').classList.add('hidden');
-    document.getElementById('stop-button').classList.add('hidden');
-    document.getElementById('timer').textContent = '';
     paused = false;
     pausedTime = 0;
-    currentRound = 1;
 }
 
 fetch('/audio-files')
     .then(response => response.json())
     .then(files => {
-        console.log('Server response:', files);
         audioFiles.basics = files.basics || [];
         audioFiles.combos = files.combos || [];
         audioFiles.advanced = files.advanced || [];
@@ -286,6 +336,5 @@ fetch('/audio-files')
         console.error('Error fetching audio files:', error);
     });
 
-
-    //https://genny.lovo.ai/project/66b50b3ca7750a4c6f795ff1
-    
+// Call the initial timer display update function when the page loads
+updateInitialTimerDisplay();

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/styles.css">
   <title>Shadowboxing Timer</title>
+    <link rel="icon" href="data:,">
 </head>
 
 <nav class="index-nav-bar">
@@ -19,24 +20,48 @@
   <div class="config-container">
   <div class="row">
       <div class="container container-style collumn">
-        <a href="pages\config.html"><img id="setting-icon" src="images\settings.png"></a>
+        <img id="setting-icon" src="images\settings.png">
         <h1 class="title-style">Shadowbox Timer</h1>
         <h6 class="label-style">Developed by Happy Ending Coding</h6>
       </div>
 
       <div class="container container-style column">
         <div class="timer-div">
-          <label><span class="label-style timer-format">3:00</span></label>
+          <label><span id="timer-display" class="label-style timer-format">3:00</span></label>
       </div>
       <button id="start-button">Start</button>
-      <button id="stop-button" >Stop</button>
-      <button id="pause-button">Pause</button>
-      <button id="resume-button">Resume</button>
+      <button id="stop-button" class="hidden">Stop</button>
+      <button id="pause-button" class="hidden">Pause</button>
+      <button id="resume-button" class="hidden">Resume</button>
       <div id="countdown" class="hidden">Get Ready</div>
       
       <div id="rest-countdown" class="hidden"></div>
     </div>
     </div>
+    <div class="row">
+         <div class="container-style column hidden" id="settings-container">
+             <h2 class="label-style">Settings</h2>
+            <div class="timer-settings">
+                <label class="label-style">Rounds:</label>
+                <input type="number" class="input-style" id="rounds" value="3" min="1">
+            </div>
+            <div class="timer-settings">
+               <label class="label-style">Round Duration (minutes):</label>
+               <input type="number" class="input-style" id="round-time" value="3" min="1">
+           </div>
+           <div class="timer-settings">
+              <label class="label-style">Rest Time (minutes):</label>
+                <input type="number" class="input-style" id="rest-time" value="1" min="0">
+            </div>
+            <div class="timer-settings">
+                <label class="label-style">Background Music:</label>
+                <label class="switch">
+                    <input type="checkbox" id="music-toggle">
+                    <span class="slider round"></span>
+                </label>
+              </div>
+          </div>
+      </div>
     <div class="row">
       <div class="container-style column">
          <h5 class="label-style">Copyright @ 2025</h5>
@@ -46,5 +71,4 @@
 
   <script src="js/scripts.js"></script>
 </body>
-
-
+</html>
