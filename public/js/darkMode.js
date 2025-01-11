@@ -1,27 +1,36 @@
 document.getElementById("toggle-dark-mode").addEventListener("click", toggleDarkMode); 
 
 //Variables
-const bodyStyle = document.getElementById('body');
-const leftContainer = document.getElementById('left-container'); 
-const rightContainer = document.getElementById('right-container'); 
-const footerContainer = document.getElementById('footer-container'); 
+const body = document.getElementById('body');
 
 
-let isDarkModeEnabled = false; 
+ function toggleDarkMode() {
+   
+   body.classList.toggle('dark-mode'); //Switches between dark and light mode
+   
+   if(body.classList.contains("dark-mode")){
+      localStorage.setItem('theme', 'dark')
+   }
+   else {
+      localStorage.setItem('theme', 'light')
+   }
+   
+  const savedTheme = localStorage.getItem('theme'); 
+  if(savedTheme = "dark") {
+   document.body.classList.add('dark-mode')
+  }
+  else{
+   document.body.classList.remove()
+  }
 
- //When clicked toggle dark mode
-function toggleDarkMode() {
-    bodyStyle.classList.toggle("dark-mode");
-    leftContainer.classList.toggle("dark-mode");
-    rightContainer.classList.toggle("dark-mode");
-    footerContainer.classList.toggle("dark-mode");
+   
 }
 
 function changeImg(){
    if(isDarkModeEnabled == true){
-      document.getElementById("toggle-dark-mode").src = "/images/light-mode.png";
+      document.getElementById("toggle-dark-mode").src = "public/images/light-mode.png";
    }
    else if(isDarkModeEnabled == false){
-      document.getElementById("toggle-dark-mode").src="/images/dark-mode.png";
+      document.getElementById("toggle-dark-mode").src="public/images/dark-mode.png";
    }
 }
