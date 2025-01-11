@@ -306,10 +306,9 @@ footer {
 body.dark-mode {
   background-color: #232b2b;
 }
- .dark-mode {
+ body #left-container.dark-mode {
   background-color: #353839;  
  }
-
 
 
 
