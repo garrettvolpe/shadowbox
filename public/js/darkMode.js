@@ -2,35 +2,36 @@ document.getElementById("toggle-dark-mode").addEventListener("click", toggleDark
 
 //Variables
 const body = document.getElementById('body');
+const toggleDarkModeImg = document.getElementById('toggle-dark-mode');
 
+// Function to set the theme on initial page load
+function setInitialTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    console.log(savedTheme)
+    if (savedTheme === 'dark') {
+      console.log("test")
+        body.classList.add('dark-mode');
+        toggleDarkModeImg.src="images/light-mode.png"
+    } else {
+         toggleDarkModeImg.src="images/dark-mode.png"
+    }
 
- function toggleDarkMode() {
-   
-   body.classList.toggle('dark-mode'); //Switches between dark and light mode
-   
-   if(body.classList.contains("dark-mode")){
-      localStorage.setItem('theme', 'dark')
+}
+
+function toggleDarkMode() {
+   console.log("test")
+   const savedTheme = localStorage.getItem('theme');
+    if(body.classList.contains("dark-mode")){
+      localStorage.setItem('theme', 'light');
+        toggleDarkModeImg.src = "images/dark-mode.png"
    }
    else {
-      localStorage.setItem('theme', 'light')
+      localStorage.setItem('theme', 'dark');
+        toggleDarkModeImg.src = "images/light-mode.png"
    }
    
-  const savedTheme = localStorage.getItem('theme'); 
-  if(savedTheme = "dark") {
-   document.body.classList.add('dark-mode')
-  }
-  else{
-   document.body.classList.remove()
-  }
-
-   
+   body.classList.toggle('dark-mode');
 }
 
-function changeImg(){
-   if(isDarkModeEnabled == true){
-      document.getElementById("toggle-dark-mode").src = "public/images/light-mode.png";
-   }
-   else if(isDarkModeEnabled == false){
-      document.getElementById("toggle-dark-mode").src="public/images/dark-mode.png";
-   }
-}
+// Set the initial theme when the page loads
+setInitialTheme();
