@@ -7,12 +7,10 @@ let convertedSavedDuration = parseInt(savedDuration) * 60;
 let timerInterval; 
 const timerDisplay = document.getElementById('timer-display')
 
-
 console.log(savedDuration);
 
-
 function setInitialDisplayTime() {
-    timerDisplay.textContent = "0" + savedDuration + ":00"; 
+    timerDisplay.textContent =  "0" + savedDuration + ":00"; 
 }
 //Function to update the timer display
 function updateTimerDisplay(){

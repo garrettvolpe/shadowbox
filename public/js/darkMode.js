@@ -24,6 +24,7 @@ function toggleDarkMode() {
    
    body.classList.toggle('dark-mode');
 }
-//test
+
+
 // Set the initial theme when the page loads
 setInitialTheme();

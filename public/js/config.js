@@ -1,9 +1,13 @@
 document.getElementById("save-setting-bttn").addEventListener('click', saveSettings); 
+document.getElementById('restore-defaults').addEventListener('click', restoreDefaultSetting);
 
 
 let savedNumOfRounds; 
 let savedDuration;
 let savedRestTime;
+let numOfRounds
+let roundTime
+let restTime
 
 //Variables
  function setIntialSettings(){
@@ -19,13 +23,18 @@ let savedRestTime;
  }
 
 function saveSettings(){
-
-        let numOfRounds = document.getElementById('rounds').value;
-        let roundTime = document.getElementById('round-times').value;
-        let restTime = document.getElementById('rest-time').value;
+        numOfRounds = document.getElementById('rounds').value;
+        roundTime = document.getElementById('round-times').value;
+        restTime= document.getElementById('rest-time').value;
         localStorage.setItem('num-rounds', numOfRounds);
         localStorage.setItem('round-times', roundTime); 
         localStorage.setItem('rest-time', restTime);
+}
+
+function restoreDefaultSetting() {
+    localStorage.setItem('num-rounds', 3); 
+    localStorage.setItem('round-times', 3); 
+    localStorage.setItem('rest-time', 30);
 }
 
 setIntialSettings();
