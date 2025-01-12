@@ -7,7 +7,6 @@ const toggleDarkModeImg = document.getElementById('toggle-dark-mode');
 //set the theme on initial page load
 function setInitialTheme() {
     const savedTheme = localStorage.getItem('theme');
-    console.log(savedTheme)
     if (savedTheme === 'dark') {
         body.classList.add('dark-mode');
     }

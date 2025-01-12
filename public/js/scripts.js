@@ -2,12 +2,14 @@
 const ONE_SECOND = 1000;
 const INITIAL_COUNTDOWN_TIME = 3;
 
+
+
 // UI Elements Cache
 const startButton = document.getElementById('start-button');
 const pauseButton = document.getElementById('pause-button');
 const resumeButton = document.getElementById('resume-button');
 const stopButton = document.getElementById('stop-button');
-const musicToggle = document.getElementById('music-toggle');
+// const musicToggle = document.getElementById('music-toggle');
 const countdownDisplay = document.getElementById('countdown');
 const timerDisplay = document.getElementById('timer-display');
 const restCountdownDisplay = document.getElementById('rest-countdown');
@@ -39,7 +41,7 @@ startButton.addEventListener('click', startWorkout);
 pauseButton.addEventListener('click', pauseWorkout);
 resumeButton.addEventListener('click', resumeWorkout);
 stopButton.addEventListener('click', stopWorkout);
-musicToggle.addEventListener('change', toggleMusic);
+//musicToggle.addEventListener('change', toggleMusic);
 settingIcon.addEventListener('click', toggleSettings);
 roundTimeInput.addEventListener('change', updateInitialTimerDisplay); // Add event listener for round time changes
 
@@ -71,6 +73,7 @@ function playAudioFile(audioPath) {
 function updateInitialTimerDisplay() {
     const roundTimeValue = parseInt(roundTimeInput.value);
     initialTimerDisplay.textContent = formatTime(roundTimeValue * 60); // Set initial timer display to the round time
+    console.log(roundTimeInput) 
 }
 
 // Start workout function
@@ -361,6 +364,11 @@ fetch('/audio-files')
     .catch(error => {
         console.error('Error fetching audio files:', error);
     });
+
+    timerDisplay.onload = setIntitalTimerText(){
+        let savedDuration = localStorage.getItem('round-time'); 
+        timerDisplay.textContent = savedDuration;
+    }
 
 // Call the initial timer display update function when the page loads
 updateInitialTimerDisplay();

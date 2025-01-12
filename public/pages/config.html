@@ -33,11 +33,11 @@
         <div class="row">
             <div class="container column">
                 <label class="label-style" for="rounds">Rounds:</label>
-                <input class="input-style" type="number" id="rounds" value="3" min="1">
+                <input class="input-style" type="number" id="rounds" min="1">
                 <label class="label-style" for="duration">Round Duration (minutes):</label>
-                <input class="input-style" type="number" id="round-time" min="1" value="3">
+                <input class="input-style" type="number" id="round-time" min="1" >
                 <label class="label-style" for="rest-time">Rest Time (minutes):</label>
-                <input class="input-style" type="number" id="rest-time" min="1" value="1">
+                <input class="input-style" type="number" id="rest-time" min="1">
             </div> 
             <div class="container column">
                 <label class="label-style label-format music-control">Background Music</label>
@@ -45,7 +45,7 @@
                         <input type="checkbox" id="music-toggle">
                         <span class="slider round"></span>
                     </label>
-                    <!--<label class="label-style label-format">Sound</label>
+                    <label class="label-style label-format">Sound</label>
                     <label class="switch">
                         <input type="checkbox"  checked>
                         <span class="slider round"></span>
@@ -56,14 +56,15 @@
 
         <div class="row">
             <div class="container-style column">
-                <button class="button-style">Save Settings</button>
+                <button id="save-setting-bttn" class="button-style">Save Settings</button>
                 <button class="button-style">Restore Defaults</button>
             </div>
         </div>
         
     </div>
        
-    <script src="/public/js/scripts.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="/js/config.js"></script>
     
 </body>
 
