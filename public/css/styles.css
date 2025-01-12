@@ -5,6 +5,7 @@
   box-sizing: border-box;
 }
 
+/*Nav Bar Styles*/
 .index-nav-bar {
   position: fixed;
   top: 0;
@@ -31,7 +32,7 @@
 }
 
 
-
+/*Body Styles*/
 body {
   font-family: 'Roboto', sans-serif;
   background: #eaf4fc; /* Light blue background */
@@ -49,7 +50,7 @@ body {
   
 }
 
-.container-style {
+.container {
   text-align: center;
   background-color: #ffffff;
   padding: 30px;
@@ -87,27 +88,6 @@ body {
   font-size: 1em;
 }
 
-button {
-  background: #007bff; /* Bright blue for buttons */
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1em;
-  margin: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-  background: #0056b3; /* Darker blue for hover effect */
-  transform: translateY(-2px); /* Slight lift effect */
-}
-
-button:active {
-  background: #003d7a; /* Even darker blue for active state */
-  transform: translateY(0); /* Remove lift effect */
-}
 
 .hidden {
   display: none;
@@ -123,15 +103,7 @@ button:active {
 
 
 
-#timer-container {
-  border-radius: 25px;
-  background-color: #ffffff;
-  display: flex;
-  width: 600px;
-  height: 300px;
-  margin-left: 50px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
+
 
 /*CSS for config page*/
 #config-nav-bar {
@@ -143,34 +115,16 @@ button:active {
   width: 100vw;
 }
 
-#title-container {
-  display: flex;
-  width: 100%;
-  overflow: hidden;
-  justify-content: center;
-  font-size: .65rem;
-  margin-top: 10px;
-}
 
-#title-container h1 {
-  margin-left: -40px;
-}
 
-#image-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
+
 
 #go-back{
   width: 20px;
   rotate: 180deg;
   margin-left: 20px;
   
-}
-
-#config-container {
-  min-width: 1200px;
 }
  
 .row {
@@ -204,6 +158,8 @@ button:active {
   background-color: black;
 }
 
+
+/*Slider Styles*/
 /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -268,11 +224,35 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+/* Button Stlyes*/
 .button-style {
   width: 500px;
   height: 50px;
   font-weight: bold;
 }
+
+button {
+  background: #007bff; /* Bright blue for buttons */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1em;
+  margin: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: #0056b3; /* Darker blue for hover effect */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+button:active {
+  background: #003d7a; /* Even darker blue for active state */
+  transform: translateY(0); /* Remove lift effect */
+}
+
 
 .timer-container {
  background-color:#333 ;
@@ -298,6 +278,7 @@ footer {
   width: 100%;
   height: 400px;
 }
+
 
 
 
