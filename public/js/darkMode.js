@@ -1,7 +1,20 @@
+document.addEventListener('DOMContentLoaded', preferredThemeMode); 
 document.getElementById("toggle-dark-mode").addEventListener("click", toggleDarkMode); 
 
 //Variables
 const body = document.getElementById('body');
+
+
+function preferredThemeMode(){
+
+   let savedTheme = localStorage.getItem('theme'); 
+   if(savedTheme = "dark") {
+      toggleDarkMode();
+   }
+   else {
+      body.classList.remove('dark-mode');
+   }
+}
 
 
  function toggleDarkMode() {
@@ -11,26 +24,12 @@ const body = document.getElementById('body');
    if(body.classList.contains("dark-mode")){
       localStorage.setItem('theme', 'dark')
    }
-   else {
+   else{
+      
       localStorage.setItem('theme', 'light')
    }
    
-  const savedTheme = localStorage.getItem('theme'); 
-  if(savedTheme = "dark") {
-   document.body.classList.add('dark-mode')
-  }
-  else{
-   document.body.classList.remove()
-  }
-
-   
 }
 
-function changeImg(){
-   if(isDarkModeEnabled == true){
-      document.getElementById("toggle-dark-mode").src = "public/images/light-mode.png";
-   }
-   else if(isDarkModeEnabled == false){
-      document.getElementById("toggle-dark-mode").src="public/images/dark-mode.png";
-   }
-}
+
+

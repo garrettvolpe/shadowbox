@@ -49,7 +49,7 @@ body {
   
 }
 
-.container-style {
+.container {
   text-align: center;
   background-color: #ffffff;
   padding: 30px;
@@ -230,7 +230,7 @@ button:active {
   bottom: 0;
   background-color: #ccc;
   -webkit-transition: .4s;
-  transition: .4s;
+  transition: .41s;
 }
 
 .slider:before {
@@ -306,7 +306,7 @@ footer {
 body.dark-mode {
   background-color: #232b2b;
 }
- body #left-container.dark-mode {
+ .dark-mode .container {
   background-color: #353839;  
  }
 
