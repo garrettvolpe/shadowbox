@@ -32,10 +32,17 @@ function startTimer() {
             updateTimerDisplay(); 
     }
     }, 1000)
+
+    playBackgroundMusic(); 
 }
 
 function stopTimer() {
     clearInterval(timerInterval);
+}
+
+function playBackgroundMusic(){
+    let bgMusic = new Audio('/audio/music.mp3');
+    bgMusic.play();
 }
 
 setInitialDisplayTime();
