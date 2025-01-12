@@ -25,6 +25,11 @@ app.get('/audio-files', (req, res) => {
     res.json(files);
 });
 
+// Endpoint to serve config.html
+app.get('/config', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'config.html'));
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

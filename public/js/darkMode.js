@@ -1,35 +1,30 @@
-document.addEventListener('DOMContentLoaded', preferredThemeMode); 
 document.getElementById("toggle-dark-mode").addEventListener("click", toggleDarkMode); 
 
 //Variables
 const body = document.getElementById('body');
+const toggleDarkModeImg = document.getElementById('toggle-dark-mode');
 
+//set the theme on initial page load
+function setInitialTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    console.log(savedTheme)
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+    }
 
-function preferredThemeMode(){
+}
 
-   let savedTheme = localStorage.getItem('theme'); 
-   if(savedTheme = "dark") {
-      toggleDarkMode();
+function toggleDarkMode() {
+   const savedTheme = localStorage.getItem('theme');
+    if(body.classList.contains("dark-mode")){
+      localStorage.setItem('theme', 'light');
    }
    else {
-      body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'dark');
    }
+   
+   body.classList.toggle('dark-mode');
 }
-
-
- function toggleDarkMode() {
-   
-   body.classList.toggle('dark-mode'); //Switches between dark and light mode
-   
-   if(body.classList.contains("dark-mode")){
-      localStorage.setItem('theme', 'dark')
-   }
-   else{
-      
-      localStorage.setItem('theme', 'light')
-   }
-   
-}
-
-
-
+//test
+// Set the initial theme when the page loads
+setInitialTheme();
