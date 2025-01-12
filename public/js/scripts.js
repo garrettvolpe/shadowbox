@@ -1,17 +1,24 @@
-document.getElementById("start-button").addEventListener('click', startTimer); 
-document.getElementById('stop-button').addEventListener('click', stopTimer);
-
-//Get all variables
-let savedDuration = localStorage.getItem('round-times')
+let savedDuration = localStorage.getItem('round-duration')
 let convertedSavedDuration = parseInt(savedDuration) * 60;
 let timerInterval; 
 const timerDisplay = document.getElementById('timer-display')
+const startButton = document.getElementById('start-button');
+const stopButton = document.getElementById('stop-button');
+const pauseButton = document.getElementById('pause-button');
+const resumeButton = document.getElementById('resume-button');
 
-console.log(savedDuration);
+//Event Listeners
+startButton.addEventListener('click', startTimer); 
+stopButton.addEventListener('click', stopTimer);
+// pauseButton.addEventListener('click', pauseTimer); 
+// resumeButton.addEventListener('click', resumeTimer);
 
+
+//Problem with this function is broken if 10+ min and unable to set seconds. Must store in seconds and convert. 
 function setInitialDisplayTime() {
     timerDisplay.textContent =  "0" + savedDuration + ":00"; 
 }
+
 //Function to update the timer display
 function updateTimerDisplay(){
    const minutes = Math.floor(convertedSavedDuration / 60); //Converts to a whole number
@@ -41,8 +48,22 @@ function stopTimer() {
 }
 
 function playBackgroundMusic(){
+    if (localStorage.getItem('background-music') == 'true' ){
     let bgMusic = new Audio('/audio/music.mp3');
     bgMusic.play();
+    }
+}
+
+function showElement(element) {
+    if (element) {
+        element.classList.remove('hidden');
+   }
+}
+
+function hideElement(element) {
+   if (element) {
+      element.classList.add('hidden');
+   }
 }
 
 setInitialDisplayTime();
