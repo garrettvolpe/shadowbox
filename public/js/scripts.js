@@ -1,6 +1,7 @@
 let savedDuration = localStorage.getItem('round-duration')
 let convertedSavedDuration = parseInt(savedDuration) * 60;
-let timerInterval; 
+let timerInterval = null; 
+let preTimerCDTimer = null;
 const timerDisplay = document.getElementById('timer-display')
 const startButton = document.getElementById('start-button');
 const stopButton = document.getElementById('stop-button');
@@ -8,7 +9,7 @@ const pauseButton = document.getElementById('pause-button');
 const resumeButton = document.getElementById('resume-button');
 
 //Event Listeners
-startButton.addEventListener('click', startTimer); 
+startButton.addEventListener('click', preTimerCD); 
 stopButton.addEventListener('click', stopTimer);
 // pauseButton.addEventListener('click', pauseTimer); 
 // resumeButton.addEventListener('click', resumeTimer);
@@ -33,7 +34,9 @@ function updateTimerDisplay(){
 
 
 function startTimer() {
-  timerInterval = setInterval(() => {
+    clearInterval(preTimerCDTimer);
+    if(timerInterval == null){
+    timerInterval = setInterval(() => {
     if(convertedSavedDuration > 0){
             convertedSavedDuration --;
             updateTimerDisplay(); 
@@ -41,6 +44,7 @@ function startTimer() {
     }, 1000)
 
     playBackgroundMusic(); 
+}
 }
 
 function stopTimer() {
@@ -66,7 +70,25 @@ function hideElement(element) {
    }
 }
 
-setInitialDisplayTime();
+function preTimerCD(){
+    let intervalCount = 4; //is 4 because we subtract 4-1 = 3, 2, 1....
+    timerDisplay.textContent = "Get Ready!";
+    if(preTimerCDTimer == null){ //If the timer == null then run code
+        preTimerCDTimer = setInterval(() => {
+            if(intervalCount > 1 ){ //Chanes to one to skip se
+                intervalCount--; 
+                timerDisplay.textContent = intervalCount;
+                console.log(intervalCount);
+            }
+            else {
+                startTimer();
+                updateTimerDisplay()
+            }
+            
+        }, 1000)
+    }
+}
 
+setInitialDisplayTime();
 
 
