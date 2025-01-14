@@ -1,46 +1,74 @@
-let savedDuration = localStorage.getItem('round-duration')
+let savedDuration = localStorage.getItem('round-duration');
 let convertedSavedDuration = parseInt(savedDuration) * 60;
-let timerInterval = null; 
+let timerInterval = null;
 let preTimerCDTimer = null;
-const timerDisplay = document.getElementById('timer-display')
+let currentTimeLeft = convertedSavedDuration; // Initialize with full duration
+const timerDisplay = document.getElementById('timer-display');
 const startButton = document.getElementById('start-button');
 const stopButton = document.getElementById('stop-button');
 const pauseButton = document.getElementById('pause-button');
 const resumeButton = document.getElementById('resume-button');
+const resetButton = document.getElementById('reset-button');
+let bgMusic = new Audio('/audio/music.mp3');
+let savedTime = null;
 
 //Event Listeners
-startButton.addEventListener('click', preTimerCD); 
+startButton.addEventListener('click', preTimerCD);
 stopButton.addEventListener('click', stopTimer);
-// pauseButton.addEventListener('click', pauseTimer); 
-// resumeButton.addEventListener('click', resumeTimer);
+resumeButton.addEventListener('click', resumeTimer);
+resetButton.addEventListener('click', resetTimer);
+pauseButton.addEventListener('click', resetTimer);
 
+//Set items
+timerDisplay.textContent = formatTime(convertedSavedDuration);
 
-//Problem with this function is broken if 10+ min and unable to set seconds. Must store in seconds and convert. 
-function setInitialDisplayTime() {
-    timerDisplay.textContent =  "0" + savedDuration + ":00"; 
-}
 
 //Function to update the timer display
 function updateTimerDisplay(){
-   const minutes = Math.floor(convertedSavedDuration / 60); //Converts to a whole number
-   const seconds = convertedSavedDuration % 60; /* Takes remainder of calculation above. Ex: convertedSaveDurtion = 60, the remainder of 60/60 = 0; 0 is returned */ 
-
-   /* padStart function first parameter forces 2 slots of text, second paramater adds 0 in any space required. Ex: 7 returns 07*/
-   let formatMinutes = String(minutes).padStart(2, "0");
-   let formatSeconds = String(seconds).padStart(2, "0");
-   
-   timerDisplay.textContent = `${formatMinutes}:${formatSeconds}`;
+  timerDisplay.textContent = formatTime(currentTimeLeft)
 }
 
+function formatTime(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const formatMinutes = String(minutes).padStart(2, '0');
+    const formatSeconds = String(seconds).padStart(2, '0');
+    return `${formatMinutes}:${formatSeconds}`;
+}
+
+function preTimerCD(){
+    showElement(stopButton)
+    let intervalCount = 4; //is 4 because we subtract 4-1 = 3, 2, 1....
+    timerDisplay.textContent = "Get Ready!";
+    preTimerCDTimer = null;
+    if(preTimerCDTimer == null){ //If the timer == null then run code
+        preTimerCDTimer = setInterval(() => {
+            if(intervalCount > 1 ){ //Chanes to one to skip se
+                intervalCount--; 
+                timerDisplay.textContent = intervalCount;
+            }
+            else {
+                startTimer();
+                updateTimerDisplay();
+                preTimerCDTimer == null
+            }
+        }, 1000)
+    }
+}
 
 function startTimer() {
+    hideElement(resetButton)
     clearInterval(preTimerCDTimer);
     if(timerInterval == null){
     timerInterval = setInterval(() => {
-    if(convertedSavedDuration > 0){
-            convertedSavedDuration --;
+    if(currentTimeLeft > 0){
+            currentTimeLeft --;
             updateTimerDisplay(); 
-    }
+        }
+        else {
+            clearInterval(timerInterval);
+            stopAudio();
+        }
     }, 1000)
 
     playBackgroundMusic(); 
@@ -49,13 +77,40 @@ function startTimer() {
 
 function stopTimer() {
     clearInterval(timerInterval);
+    stopAudio();
+    showElement(resetButton)
+    savedTime = currentTimeLeft; // Save the remaining time
+    console.log(savedTime)
+    timerInterval = null;
+}
+
+function resumeTimer() {
+    if(savedTime != null){
+        currentTimeLeft = savedTime;
+        savedTime = null;
+    }
+    else{
+        currentTimeLeft = convertedSavedDuration;
+    }
+    startTimer();
+    updateTimerDisplay();
+}
+
+function resetTimer(){
+    timerDisplay.innerText = formatTime(parseInt(savedDuration) * 60)
+    currentTimeLeft = (parseInt(savedDuration) * 60)
+    bgMusic.currentTime = 0;
 }
 
 function playBackgroundMusic(){
     if (localStorage.getItem('background-music') == 'true' ){
-    let bgMusic = new Audio('/audio/music.mp3');
     bgMusic.play();
     }
+}
+
+function stopAudio(){
+    bgMusic.pause();
+    //will add logic to stop combos being called later
 }
 
 function showElement(element) {
@@ -69,26 +124,3 @@ function hideElement(element) {
       element.classList.add('hidden');
    }
 }
-
-function preTimerCD(){
-    let intervalCount = 4; //is 4 because we subtract 4-1 = 3, 2, 1....
-    timerDisplay.textContent = "Get Ready!";
-    if(preTimerCDTimer == null){ //If the timer == null then run code
-        preTimerCDTimer = setInterval(() => {
-            if(intervalCount > 1 ){ //Chanes to one to skip se
-                intervalCount--; 
-                timerDisplay.textContent = intervalCount;
-                console.log(intervalCount);
-            }
-            else {
-                startTimer();
-                updateTimerDisplay()
-            }
-            
-        }, 1000)
-    }
-}
-
-setInitialDisplayTime();
-
-
