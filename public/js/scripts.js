@@ -1,4 +1,5 @@
 let savedDuration = localStorage.getItem('round-duration');
+let isAdvancedChecked = localStorage.getItem('isChecked');
 let convertedSavedDuration = parseInt(savedDuration) * 60;
 let timerInterval = null;
 let preTimerCDTimer = null;
@@ -10,7 +11,24 @@ const pauseButton = document.getElementById('pause-button');
 const resumeButton = document.getElementById('resume-button');
 const resetButton = document.getElementById('reset-button');
 let bgMusic = new Audio('/audio/music.mp3');
+let audioArray; 
 let savedTime = null;
+let randomAudioArrayIndex;
+
+//Arrays for Audio Files
+const basicAudio = [
+    new Audio('../audio/basics/basic1.mp3'),
+    new Audio('../audio/basics/basic4.mp3'), //basic2 9 secs long
+    new Audio('../audio/basics/basic3.mp3')
+];
+
+const advancedAudio = [
+    new Audio('../audio/advanced/clinch1.mp3'),
+    new Audio('../audio/advanced/doublejab.mp3'),
+    new Audio('../audio/advanced/feintjab.mp3')
+];
+
+
 
 //Event Listeners
 startButton.addEventListener('click', preTimerCD);
@@ -59,6 +77,7 @@ function preTimerCD(){
 function startTimer() {
     hideElement(resetButton)
     clearInterval(preTimerCDTimer);
+    playAudio(); 
     if(timerInterval == null){
     timerInterval = setInterval(() => {
     if(currentTimeLeft > 0){
@@ -124,3 +143,19 @@ function hideElement(element) {
       element.classList.add('hidden');
    }
 }
+
+//Function for
+function playAudio() { 
+    if(isAdvancedChecked == 'true'){
+        audioArray = advancedAudio; 
+    }
+    else {
+     audioArray = basicAudio;   
+    }
+    randomAudioArrayIndex = Math.floor(Math.random() * audioArray.length);
+    audioArray[randomAudioArrayIndex].play();
+    //Audio.onEnd = () => { //Waits till audio ends and then delays the next combo
+        setTimeout(playAudio, 4000);
+    //}
+}
+

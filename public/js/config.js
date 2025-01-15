@@ -5,12 +5,14 @@ const musicToggle = document.getElementById('music-toggle');
 const roundInput = document.getElementById('rounds');
 const durationInput = document.getElementById('duration');
 const restTimeInput = document.getElementById('rest-time');
+const difficultySlider = document.getElementById('difficulty-slider');
 
 
 let savedNumOfRounds;
 let savedDuration;
 let savedRestTime;
 let backgroundMusic;
+let isAdvancedCheck; 
 
 
 //Variables
@@ -19,6 +21,8 @@ function setIntialSettings() {
   savedDuration = localStorage.getItem('round-duration');
   savedRestTime = localStorage.getItem('rest-time');
   backgroundMusic = localStorage.getItem('background-music');
+
+   
 
     if (savedNumOfRounds == null) {
         localStorage.setItem('rounds', roundInput.value);
@@ -48,6 +52,8 @@ function saveSettings() {
   localStorage.setItem('round-duration', roundDuration);
   localStorage.setItem('rest-time', restTime);
   localStorage.setItem('background-music', backgroundMusic);
+
+  checkSliderState();
 }
 
 function restoreDefaultSetting() {
@@ -58,4 +64,14 @@ function restoreDefaultSetting() {
     setIntialSettings()
 }
 
-setIntialSettings();
+function checkSliderState() {
+    if(difficultySlider.checked){
+        localStorage.setItem('isChecked', true);
+    }
+    else {
+        localStorage.setItem('isChecked', false)
+    }
+}
+
+
+setIntialSettings()
