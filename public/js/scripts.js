@@ -18,14 +18,22 @@ let randomAudioArrayIndex;
 //Arrays for Audio Files
 const basicAudio = [
     new Audio('../audio/basics/basic1.mp3'),
-    new Audio('../audio/basics/basic4.mp3'), //basic2 9 secs long
+    new Audio('../audio/basics/basic4.mp3'), 
     new Audio('../audio/basics/basic3.mp3')
 ];
 
 const advancedAudio = [
-    new Audio('../audio/advanced/clinch1.mp3'),
+    new Audio('../audio/basics/basic1.mp3'),
+    new Audio('../audio/basics/basic4.mp3'), 
+    new Audio('../audio/basics/basic3.mp3'),
+    new Audio('../audio/advanced/ComboADV2.mp3'),
     new Audio('../audio/advanced/doublejab.mp3'),
-    new Audio('../audio/advanced/feintjab.mp3')
+    new Audio('../audio/advanced/feint12low.mp3'),
+    new Audio('../audio/advanced/feintjab.mp3'),
+    new Audio('../audio/advanced/leanbBack.mp3'),
+    new Audio('../audio/advanced/leanbackkick.mp3'),
+    new Audio('../audio/advanced/moveffet.mp3'),
+    new Audio('../audio/advanced/rkick.mp3')
 ];
 
 
@@ -96,9 +104,9 @@ function startTimer() {
 
 function stopTimer() {
     clearInterval(timerInterval);
-    stopAudio();
     showElement(resetButton)
     savedTime = currentTimeLeft; // Save the remaining time
+    stopAudio();
     console.log(savedTime)
     timerInterval = null;
 }
@@ -144,7 +152,7 @@ function hideElement(element) {
    }
 }
 
-//Function for
+//Function to play audio based on selected settings
 function playAudio() { 
     if(isAdvancedChecked == 'true'){
         audioArray = advancedAudio; 
@@ -152,10 +160,12 @@ function playAudio() {
     else {
      audioArray = basicAudio;   
     }
+
     randomAudioArrayIndex = Math.floor(Math.random() * audioArray.length);
     audioArray[randomAudioArrayIndex].play();
     //Audio.onEnd = () => { //Waits till audio ends and then delays the next combo
         setTimeout(playAudio, 4000);
     //}
+    
 }
 
