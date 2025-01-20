@@ -49,6 +49,11 @@ body {
   
 }
 
+#setting-icon:hover {
+  transform: rotate(360deg);
+  transition: 6s;
+}
+
 .container {
   text-align: center;
   background-color: #ffffff;
@@ -298,6 +303,7 @@ footer {
   width: 100%;
   height: 400px;
 }
+
 
 
 

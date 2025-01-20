@@ -1,19 +1,27 @@
-let savedDuration = localStorage.getItem('round-duration');
+
+
+//Public Intialized Varables
 let isAdvancedChecked = localStorage.getItem('isChecked');
-let convertedSavedDuration = parseInt(savedDuration) * 60;
-let timerInterval = null;
-let preTimerCDTimer = null;
-let currentTimeLeft = convertedSavedDuration; // Initialize with full duration
+
+let myStartTimer = null;
+let countDownTimer = null;
+let audioInterval;
+
+//Public Unintilized Variables
+
+let savedDuration;
+let currentTimeLeft;
+let savedTime;
+
+let bgMusic = new Audio('/audio/music.mp3'); 
+
+//DOM elements
 const timerDisplay = document.getElementById('timer-display');
 const startButton = document.getElementById('start-button');
 const stopButton = document.getElementById('stop-button');
 const pauseButton = document.getElementById('pause-button');
 const resumeButton = document.getElementById('resume-button');
 const resetButton = document.getElementById('reset-button');
-let bgMusic = new Audio('/audio/music.mp3');
-let audioArray; 
-let savedTime = null;
-let randomAudioArrayIndex;
 
 //Arrays for Audio Files
 const basicAudio = [
@@ -30,70 +38,82 @@ const advancedAudio = [
     new Audio('../audio/advanced/doublejab.mp3'),
     new Audio('../audio/advanced/feint12low.mp3'),
     new Audio('../audio/advanced/feintjab.mp3'),
-    new Audio('../audio/advanced/leanbBack.mp3'),
+    new Audio('../audio/advanced/leanBack.mp3'),
     new Audio('../audio/advanced/leanbackkick.mp3'),
     new Audio('../audio/advanced/moveffet.mp3'),
     new Audio('../audio/advanced/rkick.mp3')
 ];
-
-
+//End of Audiofiles
 
 //Event Listeners
-startButton.addEventListener('click', preTimerCD);
-stopButton.addEventListener('click', stopTimer);
+startButton.addEventListener('click', countDown);
+stopButton.addEventListener('click', stopTimer);    
 resumeButton.addEventListener('click', resumeTimer);
 resetButton.addEventListener('click', resetTimer);
 pauseButton.addEventListener('click', resetTimer);
 
-//Set items
-timerDisplay.textContent = formatTime(convertedSavedDuration);
 
 
-//Function to update the timer display
-function updateTimerDisplay(){
-  timerDisplay.textContent = formatTime(currentTimeLeft)
+firstTimeSetting();
+
+//FUN
+function firstTimeSetting() {
+    if(!localStorage.getItem('round-duration')){
+        localStorage.setItem('round-duration', '3');
+        localStorage.setItem('rounds', 3);
+        localStorage.setItem('rest-time', 30);
+        localStorage.setItem('background-music', false)
+        savedDuration = localStorage.getItem('round-duration')
+        currentTimeLeft = parseInt(savedDuration) * 60;  
+        timerDisplay.textContent = formatTime(currentTimeLeft);
+    }
+    else {  
+        savedDuration = localStorage.getItem('round-duration');
+        currentTimeLeft = parseInt(savedDuration) * 60;
+        timerDisplay.textContent = formatTime(currentTimeLeft);
+    }
 }
 
-function formatTime(totalSeconds) {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    const formatMinutes = String(minutes).padStart(2, '0');
-    const formatSeconds = String(seconds).padStart(2, '0');
-    return `${formatMinutes}:${formatSeconds}`;
-}
-
-function preTimerCD(){
-    showElement(stopButton)
+function countDown(){
+    showElement(stopButton); 
+    hideElement(startButton);
     let intervalCount = 4; //is 4 because we subtract 4-1 = 3, 2, 1....
     timerDisplay.textContent = "Get Ready!";
-    preTimerCDTimer = null;
-    if(preTimerCDTimer == null){ //If the timer == null then run code
-        preTimerCDTimer = setInterval(() => {
+    countDownTimer = null;
+    if(countDownTimer == null){ //If the timer == null then run code
+        countDownTimer = setInterval(() => {
             if(intervalCount > 1 ){ //Chanes to one to skip se
                 intervalCount--; 
                 timerDisplay.textContent = intervalCount;
+                
             }
             else {
-                startTimer();
+                
+                startTimer(currentTimeLeft);
                 updateTimerDisplay();
-                preTimerCDTimer == null
+                countDownTimer == null;
+                
             }
         }, 1000)
     }
 }
 
-function startTimer() {
+function startTimer(timeLeft) {
     hideElement(resetButton)
-    clearInterval(preTimerCDTimer);
+    clearInterval(countDownTimer);
     playAudio(); 
-    if(timerInterval == null){
-    timerInterval = setInterval(() => {
+    
+    timeLeft = currentTimeLeft;
+    
+    if(myStartTimer == null){
+    myStartTimer = setInterval(() => {
     if(currentTimeLeft > 0){
             currentTimeLeft --;
             updateTimerDisplay(); 
+            
         }
         else {
-            clearInterval(timerInterval);
+            clearInterval(myStartTimer);
             stopAudio();
         }
     }, 1000)
@@ -103,31 +123,50 @@ function startTimer() {
 }
 
 function stopTimer() {
-    clearInterval(timerInterval);
-    showElement(resetButton)
-    savedTime = currentTimeLeft; // Save the remaining time
+    clearInterval(myStartTimer);
+    clearInterval(audioInterval);
+    showElement(resumeButton);
+    showElement(resetButton);
+    hideElement(stopButton)
+    savedTime = currentTimeLeft // Save the remaining time
     stopAudio();
-    console.log(savedTime)
-    timerInterval = null;
+    myStartTimer = null;
 }
 
 function resumeTimer() {
     if(savedTime != null){
         currentTimeLeft = savedTime;
-        savedTime = null;
+        //debugger;
     }
-    else{
-        currentTimeLeft = convertedSavedDuration;
-    }
-    startTimer();
+    startTimer(currentTimeLeft);
+    
     updateTimerDisplay();
+    hideElement(resumeButton); 
+    showElement(stopButton); 
+    
 }
 
 function resetTimer(){
     timerDisplay.innerText = formatTime(parseInt(savedDuration) * 60)
-    currentTimeLeft = (parseInt(savedDuration) * 60)
+    currentTimeLeft = localStorage.getItem('round-duration');
     bgMusic.currentTime = 0;
+    hideElement(resetButton);
+    hideElement(resumeButton);
+    showElement(startButton);
 }
+
+//Function to update the timer display
+function updateTimerDisplay(){
+    timerDisplay.textContent = formatTime(currentTimeLeft);
+  }
+  
+  function formatTime(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const formatMinutes = String(minutes).padStart(2, '0');
+      const formatSeconds = String(seconds).padStart(2, '0');
+      return `${formatMinutes}:${formatSeconds}`;
+  }
 
 function playBackgroundMusic(){
     if (localStorage.getItem('background-music') == 'true' ){
@@ -137,7 +176,35 @@ function playBackgroundMusic(){
 
 function stopAudio(){
     bgMusic.pause();
+    pickRandomAudio().pause;
     //will add logic to stop combos being called later
+}
+
+//Function to play audio based on selected settings
+function playAudio() { 
+    pickRandomAudio().play;
+   audioInterval = setInterval(function() {
+    pickRandomAudio().play(); 
+   }, 3000);
+}
+
+function pickRandomAudio(audioArray){
+    let randomIndex = Math.floor(Math.random(100) * 100); 
+    console.log(randomIndex);
+      
+    if (randomIndex < 55){
+        let randomBasicAudioArrayIndex = Math.floor(Math.random() * basicAudio.length);
+        return basicAudio[randomBasicAudioArrayIndex]; 
+        
+    }
+    else if(randomIndex >= 55 && randomIndex < 80) {
+        let randomAdvAudioArrayIndex = Math.floor(Math.random() * advancedAudio.length);
+        return advancedAudio[randomAdvAudioArrayIndex]; 
+    }
+    else {
+        console.log("SHOULD BE GAY")
+    }
+    
 }
 
 function showElement(element) {
@@ -150,22 +217,5 @@ function hideElement(element) {
    if (element) {
       element.classList.add('hidden');
    }
-}
-
-//Function to play audio based on selected settings
-function playAudio() { 
-    if(isAdvancedChecked == 'true'){
-        audioArray = advancedAudio; 
-    }
-    else {
-     audioArray = basicAudio;   
-    }
-
-    randomAudioArrayIndex = Math.floor(Math.random() * audioArray.length);
-    audioArray[randomAudioArrayIndex].play();
-    //Audio.onEnd = () => { //Waits till audio ends and then delays the next combo
-        setTimeout(playAudio, 4000);
-    //}
-    
 }
 
