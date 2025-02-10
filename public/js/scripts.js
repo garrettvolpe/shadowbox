@@ -202,7 +202,7 @@ function pickRandomAudio(audioArray){
         return advancedAudio[randomAdvAudioArrayIndex]; 
     }
     else {
-        console.log("SHOULD BE GAY")
+        console.log("")
     }
     
 }
