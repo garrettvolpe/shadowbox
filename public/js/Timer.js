@@ -24,6 +24,8 @@ const ComboAudio = [
     new Audio('./audio/basics/basic1.mp3'),
     new Audio('./audio/basics/basic3.mp3'),
     new Audio('./audio/basics/basic4.mp3'),
+    new Audio('./audio/combos/1,2,knee.mp3')
+
 ];
 
 const SaveSetting = {
