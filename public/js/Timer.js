@@ -30,6 +30,7 @@ class Timer {
     InitializeTimer()
     {
         this.m_RemainingTime = this.m_RoundDuration;
+        this.m_RemainingRestTime = this.m_RoundRestTime;
         timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
     }
 
@@ -55,12 +56,7 @@ class Timer {
     ResetTimer()
     {
         clearInterval(timerInterval);
-        if(this.m_RemainingTime <= 0)
-        {
-            this.m_RemainingTime = this.m_RoundDuration;
-            timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
-        }
-        
+        this.InitializeTimer();
     }
 
     FormatTimerText(remainingTime)
@@ -81,15 +77,26 @@ class Timer {
 
     UpdateTimer()
     {
-         if(this.m_RemainingTime >= 0)
+        if(this.m_RemainingTime >= 0)
             {
                 timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
                 this.m_RemainingTime--; 
             }
+        else if(this.m_RemainingRestTime != 0)
+        {
+             timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
+             this.m_RemainingRestTime--;
+        }
+        else
+         {
+            
+    
+            this.ResetTimer();
+        }
     }
 }
 
-const newTimer = new Timer(95, 60, 3);
+const newTimer = new Timer(5, 5, 3);
 newTimer.InitializeTimer();
 
 startButton.addEventListener("click", () => newTimer.StartTimer());
