@@ -18,7 +18,7 @@
     </div>
 </nav>
 
-
+<script type="module" src="/js/config.js"></script>
 <body>
     <div class="config-container">
         <div class="row">
@@ -33,11 +33,11 @@
         <div class="row">
             <div class="container column">
                 <label class="label-style" for="rounds">Rounds:</label>
-                <input class="input-style" type="number" id="rounds" min="1" value="3">
+                <input class="input-style" type="number" id="number-rounds" min="1" max="10" step="1" value="3" >
                 <label class="label-style" for="duration">Round Duration (minutes):</label>
-                <input class="input-style" type="timer" id="duration" min="1" value="3">
+                <input class="input-style" type="number" id="duration" min="1" step="1" value="3">
                 <label class="label-style" for="rest-time">Rest Time (minutes):</label>
-                <input class="input-style" type="timer" id="rest-time" min="1" value="1">
+                <input class="input-style" type="number" id="rest-time" min="1" step="1" value="1">
             </div> 
             <div class="container column">
                 <label class="label-style label-format music-control">Background Music</label>
@@ -61,7 +61,7 @@
         </div>
         
     </div>
-           <script type="module" src="/js/config.js"></script>
+           
     
 </body>
 

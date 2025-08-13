@@ -23,6 +23,19 @@ const ComboAudio = [
     new Audio('./audio/basics/basic4.mp3'),
 ];
 
+const SaveSetting = {
+    savedRoundDurationMins: localStorage.getItem('saved-duration'),
+    savedRestTimeMins: localStorage.getItem('saved-rest-time'),
+    saveNumberOfRounds: localStorage.getItem('saved-round-amount'),
+
+    ConvertToSeconds(duration) {
+        return duration * 60;
+    }
+
+
+
+};
+
 const roundStartSound = new Audio('./audio/misc/bell_start.mp3');
 const roundEndSound = new Audio('./audio/misc/bell_end.mp3');
 const maxClickAllowed = 1;
@@ -225,8 +238,11 @@ class Timer
     }
 }
 
+let savedDurationSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRoundDurationMins);
+let savedRestTimeSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRestTimeMins);
+let savedNumberOfRounds = SaveSetting.saveNumberOfRounds;
 
-const newTimer = new Timer(10, 5, 2, StateManager.INITIALSTATE);
+const newTimer = new Timer(savedDurationSeconds, savedRestTimeSeconds, savedNumberOfRounds, StateManager.INITIALSTATE);
 newTimer.InitializeTimer();
 
 
@@ -236,6 +252,7 @@ resumeButton.addEventListener('click', () => newTimer.ResumeTimer());
 resetButton.addEventListener('click', () => newTimer.ResetTimer());
 
 DebugTimer(newTimer);
+console.log(SaveSetting.savedDurationSeconds);
 
 function DebugTimer(timer)
 {

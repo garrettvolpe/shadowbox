@@ -1,77 +1,45 @@
-document.getElementById("save-setting-bttn").addEventListener('click', saveSettings);
-document.getElementById('restore-defaults').addEventListener('click', restoreDefaultSetting);
-
+const saveButton = document.getElementById('save-setting-bttn');
 const musicToggle = document.getElementById('music-toggle');
-const roundInput = document.getElementById('rounds');
+
+
 const durationInput = document.getElementById('duration');
 const restTimeInput = document.getElementById('rest-time');
+
 const difficultySlider = document.getElementById('difficulty-slider');
 
+const SaveSetting = {
+    savedRoundDurationMins: localStorage.getItem('saved-duration'),
+    savedRestTimeMins: localStorage.getItem('saved-rest-time'),
+    saveNumberOfRounds: localStorage.getItem('saved-round-amount'),
 
-let savedNumOfRounds;
-let savedDuration;
-let savedRestTime;
-let backgroundMusic;
-let isAdvancedCheck; 
+};
 
+class Setting
+{
+    constructor(savedRoundAmount, savedRoundDuration, saveRoundRestTime)
+    {
+        this.m_SavedRoundAmount = savedRoundAmount;
+        this.m_SaveRoundDuration = savedRoundDuration;
+        this.m_SaveRoundRestTime = saveRoundRestTime;
 
-//Variables
-function setIntialSettings() {
-  savedNumOfRounds = localStorage.getItem('rounds');
-  savedDuration = localStorage.getItem('round-duration');
-  savedRestTime = localStorage.getItem('rest-time');
-  backgroundMusic = localStorage.getItem('background-music');
+        document.getElementById('number-rounds').value = this.m_SavedRoundAmount;
+        document.getElementById('duration').value = this.m_SaveRoundDuration;
+        document.getElementById('rest-time').value = this.m_SaveRoundRestTime;
+    }
 
-   
+    HandleSaveSetting()
+    {
+        this.m_SavedRoundAmount = document.getElementById('number-rounds').value;
+        localStorage.setItem('saved-round-amount', this.m_SavedRoundAmount);
 
-    if (savedNumOfRounds == null) {
-        localStorage.setItem('rounds', roundInput.value);
-        localStorage.setItem('round-duration', durationInput.value);
-        localStorage.setItem('rest-time', restTimeInput.value);
-        localStorage.setItem('background-music', false)
-        }
-    else{
-        roundInput.value = savedNumOfRounds;
-        durationInput.value = savedDuration;
-        restTimeInput.value = savedRestTime;
-        if (backgroundMusic === 'true') {
-            musicToggle.checked = true;
-        } else {
-            musicToggle.checked = false;
-        }
+        this.m_SavedRoundAmount = document.getElementById('duration').value;
+        localStorage.setItem('saved-duration', this.m_SavedRoundAmount);
+
+        this.m_SaveRoundRestTime = document.getElementById('rest-time').value;
+        localStorage.setItem('saved-rest-time', this.m_SaveRoundRestTime);
     }
 }
 
-function saveSettings() {
-  let numOfRounds = document.getElementById('rounds').value;
-  let roundDuration = document.getElementById('duration').value;
-  let restTime = document.getElementById('rest-time').value;
-  const backgroundMusic = document.getElementById('music-toggle').checked;
-
-  localStorage.setItem('rounds', numOfRounds);
-  localStorage.setItem('round-duration', roundDuration);
-  localStorage.setItem('rest-time', restTime);
-  localStorage.setItem('background-music', backgroundMusic);
-
-  checkSliderState();
-}
-
-function restoreDefaultSetting() {
-    localStorage.removeItem('rounds');
-    localStorage.removeItem('round-duration');
-    localStorage.removeItem('rest-time');
-    localStorage.removeItem('background-music');
-    setIntialSettings()
-}
-
-function checkSliderState() {
-    if(difficultySlider.checked){
-        localStorage.setItem('isChecked', true);
-    }
-    else {
-        localStorage.setItem('isChecked', false)
-    }
-}
-
-
-setIntialSettings()
+const userSettings =
+    new Setting(SaveSetting.saveNumberOfRounds, SaveSetting.savedRoundDurationMins, SaveSetting.savedRestTimeMins);
+saveButton.addEventListener('click', () => userSettings.HandleSaveSetting());
