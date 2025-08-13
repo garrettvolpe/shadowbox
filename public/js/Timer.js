@@ -56,6 +56,7 @@ class Timer
         this.m_RemainingRestTime = this.m_RoundRestTime;
         timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
         timerLabel.textContent = TimerLabelText.IDLETXT;
+        clearInterval(timerInterval);
     }
 
     StartTimer()
@@ -86,7 +87,7 @@ class Timer
 
     ResetTimer()
     {
-        this.m_CurrentState = StateManager.INIETIALSTAT;
+        this.m_CurrentState = StateManager.INITIALSTATE;
     }
 
     FormatTimerText(remainingTime)
@@ -116,7 +117,6 @@ class Timer
             case StateManager.INITIALSTATE:
                 randomIndex = 0;
                 this.InitializeTimer();
-                clearInterval(timerInterval);
                 break;
 
             case StateManager.WORKRUNNING:
