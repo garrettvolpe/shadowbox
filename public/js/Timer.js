@@ -15,18 +15,25 @@ const TimerLabelText = Object.freeze({
   RESTTXT: "REST",
 });
 
-const TimerState = Object.freeze({});
+const ComboAudio = [
+  new Audio("./audio/basics/basic1.mp3"),
+  new Audio("./audio/basics/basic3.mp3"),
+  new Audio("./audio/basics/basic4.mp3"),
+];
+
+const roundStartSound = new Audio("./audio/misc/bell_start.mp3");
+const roundEndSound = new Audio("./audio/misc/bell_end.mp3");
 
 let timerInterval;
+let comboInterval;
 
 /*                      ////////// Timer Class Formatting //////////
         -- Any variable with m_[VariableName] is a member of the class and
         cannot be used outside the scope of said class. 
 */
 class Timer {
-  m_RoundStartSound = new Audio("./audio/misc/bell_start.mp3");
-  m_RoundEndSound = new Audio("./audio/misc/bell_end.mp3");
   m_RoundCounter = 1;
+  m_IsWorkTimeRunning;
 
   constructor(roundDuration, roundRestTime, numberOfRounds) {
     this.m_RoundDuration = roundDuration;
@@ -38,21 +45,23 @@ class Timer {
     this.m_RoundCounter = 1;
     this.m_RemainingTime = this.m_RoundDuration;
     this.m_RemainingRestTime = this.m_RoundRestTime;
+    this.m_IsWorkTimeRunning = false;
     timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
     timerLabel.textContent = TimerLabelText.IDLETXT;
   }
 
   StartTimer() {
-    this.PlayBellAudio(this.m_RemainingTime);
-    if (this.m_RoundCounter <= this.m_NumberOfRounds) {
-      timerInterval = setInterval(() => {
-        this.UpdateTimer();
-      }, 1000);
-      console.log(this.m_RoundCounter);
-    }
+    startButton.classList.add("hidden");
+    resumeButton.classList.remove("hidden");
+    this.PlayAudio(roundStartSound);
+    this.m_IsWorkTimeRunning = true;
+    timerInterval = setInterval(() => {
+      this.UpdateTimer();
+    }, 1000);
   }
 
   PauseTimer() {
+    clearInterval(comboInterval);
     clearTimeout(timerInterval);
   }
 
@@ -63,7 +72,10 @@ class Timer {
   }
 
   ResetTimer() {
+    startButton.classList.remove("hidden");
+    resumeButton.classList.add("hidden");
     clearInterval(timerInterval);
+    clearInterval(comboInterval);
     this.InitializeTimer();
   }
 
@@ -81,46 +93,57 @@ class Timer {
   }
 
   UpdateTimer() {
-    this.PlayBellAudio(this.m_RemainingTime);
+    if (!this.m_IsWorkTimeRunning) {
+      clearInterval(comboInterval);
+    }
+
+    if (this.m_RemainingTime == 1) {
+      this.PlayAudio(roundEndSound);
+    }
 
     if (this.m_RemainingTime >= 0) {
+      this.m_IsWorkTimeRunning = true;
+
       timerLabel.textContent = TimerLabelText.RUNNINGTXT;
       timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
       this.m_RemainingTime--;
     } else if (this.m_RemainingRestTime >= 0) {
+      this.m_IsWorkTimeRunning = false;
       timerLabel.textContent = TimerLabelText.RESTTXT;
       timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
       this.m_RemainingRestTime--;
-    } else if (this.m_RemainingRestTime <= 0) {
+    } else if (
+      this.m_RemainingRestTime <= 0 &&
+      this.m_RoundCounter != this.m_NumberOfRounds
+    ) {
       this.InitializeNextRoundTimer();
+      this.PlayAudio(roundStartSound);
+    }
+    else 
+    {
+        this.ResetTimer();
     }
   }
 
-  PlayBellAudio(remainingTime) {
-    if (remainingTime == this.m_RoundDuration) {
-      this.m_RoundStartSound.play();
-    }
-    if (remainingTime == 0) {
-      this.m_RoundEndSound.play();
-      remainingTime = -1;
+  PlayAudio(audioSource, ...index) {
+    if (audioSource == []) {
+      audioSource[i].play();
+    } else {
+      audioSource.play();
     }
   }
 
   InitializeNextRoundTimer() {
-    if (this.m_RoundCounter == this.m_NumberOfRounds) {
-      this.ResetTimer();
-      return;
-    }
-
     this.m_RoundCounter++;
     this.m_RemainingTime = this.m_RoundDuration;
     this.m_RemainingRestTime = this.m_RoundRestTime;
     timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
     timerLabel.textContent = TimerLabelText.RUNNINGTXT;
+    this.m_IsWorkTimeRunning = true;
   }
 }
 
-const newTimer = new Timer(5, 5, 2);
+const newTimer = new Timer(10, 5, 2);
 newTimer.InitializeTimer();
 
 startButton.addEventListener("click", () => newTimer.StartTimer());
