@@ -1,4 +1,5 @@
 
+
 const timerDisplay = document.getElementById('timer-display');
 const startButton = document.getElementById('start-button');
 const stopButton = document.getElementById('stop-button');
@@ -29,7 +30,7 @@ class Timer {
     InitializeTimer()
     {
         this.m_RemainingTime = this.m_RoundDuration;
-        timerDisplay.textContent = this.m_RoundDuration;
+        timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
     }
 
     StartTimer()
@@ -53,35 +54,42 @@ class Timer {
 
     ResetTimer()
     {
-        if(this.m_RemainingTime == 0)
+        clearInterval(timerInterval);
+        if(this.m_RemainingTime <= 0)
         {
             this.m_RemainingTime = this.m_RoundDuration;
-            timerDisplay.textContent = this.m_RemainingTime;
+            timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
         }
         
     }
 
-    FormatTimerText()
+    FormatTimerText(remainingTime)
     {
         let minutes; 
         let seconds; 
+        
+        minutes = Math.floor(remainingTime / 60); 
+        seconds = remainingTime % 60;
 
-        minutes /= this.m_RoundDuration; 
-        seconds %= this.m_RoundDuration / minutes;
+        let formattedMinutes = String(minutes).padStart(2, "0");
+        let formattedSeconds = String(seconds).padStart(2, "0");
+
+
+        return `${formattedMinutes}:${formattedSeconds}`;
        
     }
 
     UpdateTimer()
     {
-         if(this.m_RemainingTime > 0)
+         if(this.m_RemainingTime >= 0)
             {
+                timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
                 this.m_RemainingTime--; 
-                timerDisplay.textContent = this.m_RemainingTime; 
             }
     }
 }
 
-const newTimer = new Timer(10, 60, 3);
+const newTimer = new Timer(95, 60, 3);
 newTimer.InitializeTimer();
 
 startButton.addEventListener("click", () => newTimer.StartTimer());
