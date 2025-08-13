@@ -10,7 +10,7 @@ const resetButton = document.getElementById('reset-button');
 
 const defaultAmount = 3;
 
-// ENUM - JS doesnt have default enumerators //
+
 const StateManager =
     Object.freeze({INITIALSTATE: 0, WORKRUNNING: 1, RESTRUNNING: 2, NEXTROUND: 3, PAUSEROUND: 4, RESUMEROUND: 5});
 
@@ -104,6 +104,67 @@ class Timer
         }
         this.CheckClickCount();
     }
+    HandleWorkTimer()
+    {
+        randomIndex = Math.floor(Math.random() * ComboAudio.length);
+        this.m_RemainingTime--;
+        timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+        timerLabel.textContent = TimerLabelText.RUNNINGTXT;
+        this.HandleComboCalls(randomIndex);
+        if (this.m_RemainingTime <= 0)
+        {
+            this.PlayAudio(roundEndSound);
+        }
+        if (this.m_RemainingTime <= 0)
+        {
+            this.m_CurrentState = StateManager.RESTRUNNING;
+        }
+    }
+
+    HandleResetTimer()
+    {
+        timerDisplay.style.color = 'RED';
+        this.m_RemainingRestTime--;
+        timerLabel.textContent = TimerLabelText.RESTTXT;
+        timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
+        if (this.m_RemainingRestTime <= 0 && this.m_RoundCounter < this.m_NumberOfRounds)
+        {
+            this.m_CurrentState = StateManager.NEXTROUND;
+            timerDisplay.style.color = 'GREEN';
+        }
+        if (this.m_RemainingRestTime == 0 && this.m_RoundCounter == this.m_NumberOfRounds)
+        {
+            this.m_CurrentState = StateManager.INITIALSTATE;
+        }
+    }
+
+
+    HandleNextRound()
+    {
+        this.m_RoundCounter++;
+        this.m_RemainingTime = this.m_RoundDuration;
+        this.m_RemainingRestTime = this.m_RoundRestTime;
+        timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+        timerLabel.textContent = TimerLabelText.RUNNINGTXT;
+        this.PlayAudio(roundStartSound);
+        this.m_CurrentState = StateManager.WORKRUNNING;
+    }
+
+    HandlePauseRound()
+    {
+        timerDisplay.style.color = 'GRAY';
+        this.m_CurrentTimeRemaing = this.m_RemainingTime;
+        this.m_CurrnentRestTimeRemaining = this.m_RemainingRestTime;
+        this.m_CurrentRound = this.m_RoundCounter;
+        console.log(this.m_CurrentTimeRemaing);
+        clearInterval(timerInterval);
+    }
+
+    HandleComboCalls(randomIndex)
+    {
+        this.PlayAudio(ComboAudio[randomIndex]);
+    }
+
     PauseTimer()
     {
         currentClickCount++;
@@ -132,8 +193,6 @@ class Timer
         }
         this.CheckClickCount();
     }
-
-
 
     ResetTimer()
     {
@@ -178,65 +237,25 @@ class Timer
                 break;
 
             case StateManager.WORKRUNNING:
-
-                randomIndex = Math.floor(Math.random() * ComboAudio.length);
-                this.m_RemainingTime--;
-                timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
-                timerLabel.textContent = TimerLabelText.RUNNINGTXT;
-                this.HandleComboCalls(randomIndex);
-                if (this.m_RemainingTime <= 0)
-                {
-                    this.PlayAudio(roundEndSound);
-                }
-                if (this.m_RemainingTime <= 0)
-                {
-                    this.m_CurrentState = StateManager.RESTRUNNING;
-                }
+                this.HandleWorkTimer();
                 break;
 
             case StateManager.RESTRUNNING:
-                timerDisplay.style.color = 'RED';
-                this.m_RemainingRestTime--;
-                timerLabel.textContent = TimerLabelText.RESTTXT;
-                timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
-                if (this.m_RemainingRestTime <= 0 && this.m_RoundCounter < this.m_NumberOfRounds)
-                {
-                    this.m_CurrentState = StateManager.NEXTROUND;
-                    timerDisplay.style.color = 'GREEN';
-                }
-                if (this.m_RemainingRestTime == 0 && this.m_RoundCounter == this.m_NumberOfRounds)
-                {
-                    this.m_CurrentState = StateManager.INITIALSTATE;
-                }
+                this.HandleResetTimer();
                 break;
             case StateManager.NEXTROUND:
-                this.m_RoundCounter++;
-                this.m_RemainingTime = this.m_RoundDuration;
-                this.m_RemainingRestTime = this.m_RoundRestTime;
-                timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
-                timerLabel.textContent = TimerLabelText.RUNNINGTXT;
-                this.PlayAudio(roundStartSound);
-                this.m_CurrentState = StateManager.WORKRUNNING;
+                this.HandleNextRound();
                 break;
 
             case StateManager.PAUSEROUND:
-                timerDisplay.style.color = 'GRAY';
-                this.m_CurrentTimeRemaing = this.m_RemainingTime;
-                this.m_CurrnentRestTimeRemaining = this.m_RemainingRestTime;
-                this.m_CurrentRound = this.m_RoundCounter;
-                console.log(this.m_CurrentTimeRemaing);
-                clearInterval(timerInterval);
+                this.HandlePauseRound();
                 break;
-
             case StateManager.RESUMEROUND:
                 break;
         }
     }
 
-    HandleComboCalls(randomIndex)
-    {
-        this.PlayAudio(ComboAudio[randomIndex]);
-    }
+
 
     CheckClickCount()
     {
@@ -278,7 +297,6 @@ resumeButton.addEventListener('click', () => newTimer.ResumeTimer());
 resetButton.addEventListener('click', () => newTimer.ResetTimer());
 
 DebugTimer(newTimer);
-console.log(SaveSetting.savedDurationSeconds);
 
 function DebugTimer(timer)
 {
