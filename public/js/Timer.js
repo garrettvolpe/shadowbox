@@ -142,12 +142,17 @@ class Timer
 
 const newTimer = new Timer(2, 2, 1, StateManager.INITIALSTATE);
 newTimer.InitializeTimer();
-console.log('# of Rounds: ' + newTimer.m_NumberOfRounds);
-setInterval(() => {
-    console.log(newTimer.m_CurrentState);
-}, 5000);
+
 
 startButton.addEventListener('click', () => newTimer.StartTimer());
 pauseButton.addEventListener('click', () => newTimer.PauseTimer());
 resumeButton.addEventListener('click', () => newTimer.ResumeTimer());
 resetButton.addEventListener('click', () => newTimer.ResetTimer());
+
+DebugTimer(newTimer);
+
+function DebugTimer(timer)
+{
+    console.log('| Round Duration: ' + timer.m_RoundDuration + ' | Rest Duration: ' + timer.m_RoundRestTime +
+                ' | # of Rounds: ' + timer.m_NumberOfRounds + ' |  Round Count: ' + timer.m_RoundCounter + ' | ');
+}
