@@ -1,54 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/styles.css">
-  <title>Shadowboxing Timer</title>
-    <link rel="icon" href="data:,">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Shadowboxing Timer</title>
+    <link rel="icon" href="data:," />
+  </head>
 
-<nav class="index-nav-bar">
-  <ul>
-    <li><img class="nav-icon" src="/images/fullscreen.png"></li>
-    <li><img id="toggle-dark-mode" class="nav-icon" src="/images/dark-mode-icon.png"></li>
-    <li></li>
-  </ul>
-  
-</nav>
-<body id="body">
-  <div class="config-container">
-  <div class="row">
-    <!--Left Container-->
-      <div id="left-container" class="container collumn">
-        <a href="/pages/config.html"><img id="setting-icon" src="images\settings.png"></a>
-        <h1 class="title-style">Shadowbox Timer</h1>
-        <h6 class="label-style">Developed by BBB Designs</h6>
-      </div>
-    <!--Right Container-->
-      <div id="right-container" class="container column">
-        <h1 id="timer-label">Timer:</h1>
-        <div class="timer-div">
-          <label><span id="timer-display" class="label-style timer-format">3:00</span></label>
-      </div>
-      <button id="start-button">Start</button>
-      <button id="stop-button" class="hidden" >Stop</button>
-      <button id="resume-button" >Resume</button>
-      <button id="reset-button" >Reset</button>
-      <button id="pause-button">Pause</button>      
-      <div id="countdown" class="hidden">Get Ready</div>
-      
-      <div id="rest-countdown" class="hidden"></div>
-    </div>
-    </div>
-    <div class="row">
-      <div id="footer-container" class="container column">
-         <h5 class="label-style">Copyright @ 2025</h5>
-      </div>
-  </div>
-</div>
+  <nav class="index-nav-bar">
+    <ul>
+      <li><img class="nav-icon" src="/images/fullscreen.png" /></li>
+      <li>
+        <img
+          id="toggle-dark-mode"
+          class="nav-icon"
+          src="/images/dark-mode-icon.png"
+        />
+      </li>
+      <li></li>
+    </ul>
+  </nav>
+  <body id="body">
+    <div class="config-container">
+      <div class="row">
+        <!--Left Container-->
+        <div id="left-container" class="container collumn">
+          <a href="/pages/config.html"
+            ><img id="setting-icon" src="images\settings.png"
+          /></a>
+          <h1 class="title-style">Shadowbox Timer</h1>
+          <h6 class="label-style">Developed by BBB Designs</h6>
+        </div>
+        <!--Right Container-->
+        <div id="right-container" class="container column">
+          <h1 id="timer-label">Timer:</h1>
+          <div class="timer-div">
+            <label
+              ><span id="timer-display" class="label-style timer-format"
+                >3:00</span
+              ></label
+            >
+          </div>
+          <button id="start-button">Start</button>
+          <button id="stop-button" class="hidden">Stop</button>
+          <button id="resume-button" class="hidden">Resume</button>
+          <button id="reset-button">Reset</button>
+          <button id="pause-button" class="hidden">Pause</button>
+          <div id="countdown" class="hidden">Get Ready</div>
 
-  <script type="module" src="js/Timer.js"></script>
-  <script type="module" src="js/darkMode.js"></script>
-</body>
+          <div id="rest-countdown" class="hidden"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div id="footer-container" class="container column">
+          <h5 class="label-style">Copyright @ 2025</h5>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/Timer.js"></script>
+    <script type="module" src="js/darkMode.js"></script>
+  </body>
 </html>

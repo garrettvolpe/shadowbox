@@ -8,7 +8,8 @@ const resumeButton = document.getElementById('resume-button');
 const resetButton = document.getElementById('reset-button');
 
 // ENUM - JS doesnt have default enumerators //
-const StateManager = Object.freeze({INITIALSTATE: 0, WORKRUNNING: 1, RESTRUNNING: 2, NEXTROUND: 3});
+const StateManager =
+    Object.freeze({INITIALSTATE: 0, WORKRUNNING: 1, RESTRUNNING: 2, NEXTROUND: 3, PAUSEROUND: 4, RESUMEROUND: 5});
 
 const TimerLabelText = Object.freeze({
     IDLETXT: 'ARE YOU READY?',
@@ -24,10 +25,13 @@ const ComboAudio = [
 
 const roundStartSound = new Audio('./audio/misc/bell_start.mp3');
 const roundEndSound = new Audio('./audio/misc/bell_end.mp3');
+const maxClickAllowed = 1;
 
 let timerInterval;
 let comboInterval;
 let randomIndex;
+let currentClickCount;
+
 
 /*                      ////////// Timer Class Formatting //////////
         -- Any variable with m_[VariableName] is a member of the class and
@@ -50,6 +54,12 @@ class Timer
 
     InitializeTimer()
     {
+        currentClickCount = 0;
+        timerDisplay.style.transitionDuration = '.3s';
+        timerDisplay.style.color = '#007bff'
+        startButton.classList.remove('hidden');
+        resumeButton.classList.add('hidden');
+        pauseButton.classList.add('hidden');
         this.m_RandomIndex = 0;
         this.m_RoundCounter = 1;
         this.m_RemainingTime = this.m_RoundDuration;
@@ -61,33 +71,59 @@ class Timer
 
     StartTimer()
     {
-        this.PlayAudio(roundStartSound);
-        this.m_CurrentState = StateManager.WORKRUNNING;
-        timerInterval = setInterval(() => this.TimerStateManager(), 1000);
+        if (this.m_CurrentState == StateManager.INITIALSTATE)
+        {
+            timerDisplay.style.color = 'GREEN';
+            startButton.classList.add('hidden');
+            pauseButton.classList.remove('hidden');
+            resumeButton.classList.remove('hidden');
+            this.PlayAudio(roundStartSound);
+            this.m_CurrentState = StateManager.WORKRUNNING;
+            timerInterval = setInterval(() => this.TimerStateManager(), 1000);
+        }
+        this.CheckClickCount();
     }
     PauseTimer()
     {
-        this.m_CurrentTimeRemaing = this.m_RemainingTime;
-        this.m_CurrnentRestTimeRemaining = this.m_RemainingRestTime;
-        this.m_CurrentRound = this.m_RoundCounter;
-        console.log(this.m_CurrentTimeRemaing);
-        clearInterval(timerInterval);
+        currentClickCount++;
+        if (this.m_CurrentState != StateManager.PAUSEROUND)
+        {
+            this.m_CurrentState = StateManager.PAUSEROUND;
+            currentClickCount = 0;
+        }
+        this.CheckClickCount();
     }
 
     ResumeTimer()
     {
-        this.m_RemainingTime = this.m_CurrentTimeRemaing;
-        this.m_RemainingRestTime = this.m_CurrnentRestTimeRemaining;
-        this.m_RoundCounter = this.m_CurrentRound;
-        this.m_CurrentState = StateManager.WORKRUNNING;
-        timerInterval = setInterval(() => this.TimerStateManager(), 1000);
-        console.log(this.m_RoundCounter);
+        currentClickCount++;
+        console.log(currentClickCount);
+        if (this.m_CurrentState == StateManager.PAUSEROUND)
+        {
+            timerDisplay.style.color = 'GREEN';
+            this.m_RemainingTime = this.m_CurrentTimeRemaing;
+            this.m_RemainingRestTime = this.m_CurrnentRestTimeRemaining;
+            this.m_RoundCounter = this.m_CurrentRound;
+            this.m_CurrentState = StateManager.WORKRUNNING;
+            timerInterval = setInterval(() => this.TimerStateManager(), 1000);
+            console.log(this.m_RoundCounter);
+            currentClickCount = 0;
+        }
+        this.CheckClickCount();
     }
+
 
 
     ResetTimer()
     {
-        this.m_CurrentState = StateManager.INITIALSTATE;
+        currentClickCount++;
+        if (this.m_CurrentState != StateManager.INITIALSTATE)
+        {
+            this.InitializeTimer();
+            this.m_CurrentState = StateManager.INITIALSTATE;
+            currentClickCount = 0;
+        }
+        this.CheckClickCount();
     }
 
     FormatTimerText(remainingTime)
@@ -120,9 +156,11 @@ class Timer
                 break;
 
             case StateManager.WORKRUNNING:
+
                 randomIndex = Math.floor(Math.random() * ComboAudio.length);
                 this.m_RemainingTime--;
                 timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+                timerLabel.textContent = TimerLabelText.RUNNINGTXT;
                 this.HandleComboCalls(randomIndex);
                 if (this.m_RemainingTime <= 0)
                 {
@@ -135,12 +173,14 @@ class Timer
                 break;
 
             case StateManager.RESTRUNNING:
+                timerDisplay.style.color = 'RED';
                 this.m_RemainingRestTime--;
                 timerLabel.textContent = TimerLabelText.RESTTXT;
                 timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
                 if (this.m_RemainingRestTime <= 0 && this.m_RoundCounter < this.m_NumberOfRounds)
                 {
                     this.m_CurrentState = StateManager.NEXTROUND;
+                    timerDisplay.style.color = 'GREEN';
                 }
                 if (this.m_RemainingRestTime == 0 && this.m_RoundCounter == this.m_NumberOfRounds)
                 {
@@ -156,12 +196,32 @@ class Timer
                 this.PlayAudio(roundStartSound);
                 this.m_CurrentState = StateManager.WORKRUNNING;
                 break;
+
+            case StateManager.PAUSEROUND:
+                timerDisplay.style.color = 'GRAY';
+                this.m_CurrentTimeRemaing = this.m_RemainingTime;
+                this.m_CurrnentRestTimeRemaining = this.m_RemainingRestTime;
+                this.m_CurrentRound = this.m_RoundCounter;
+                console.log(this.m_CurrentTimeRemaing);
+                clearInterval(timerInterval);
+                break;
+
+            case StateManager.RESUMEROUND:
+                break;
         }
     }
 
     HandleComboCalls(randomIndex)
     {
         this.PlayAudio(ComboAudio[randomIndex]);
+    }
+
+    CheckClickCount()
+    {
+        if (currentClickCount > maxClickAllowed)
+        {
+            alert('PLS STOP, VOLPE SAID IM BAD DEV');
+        }
     }
 }
 
