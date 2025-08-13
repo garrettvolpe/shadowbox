@@ -8,7 +8,7 @@ const resumeButton = document.getElementById('resume-button');
 const resetButton = document.getElementById('reset-button');
 
 // ENUM - JS doesnt have default enumerators //
-const StateManager = Object.freeze({INITIALSTATE: 0, WORKRUNNING: 1, RESTRUNNING: 2, RESETTIMER: 3});
+const StateManager = Object.freeze({INITIALSTATE: 0, WORKRUNNING: 1, RESTRUNNING: 2, NEXTROUND: 3});
 
 const TimerLabelText = Object.freeze({
     IDLETXT: 'ARE YOU READY?',
@@ -27,6 +27,7 @@ const roundEndSound = new Audio('./audio/misc/bell_end.mp3');
 
 let timerInterval;
 let comboInterval;
+let randomIndex;
 
 /*                      ////////// Timer Class Formatting //////////
         -- Any variable with m_[VariableName] is a member of the class and
@@ -35,6 +36,9 @@ let comboInterval;
 class Timer
 {
     m_RoundCounter = 1;
+    m_CurrentTimeRemaing = 0;
+    m_CurrnentRestTimeRemaining = 0;
+    m_CurrentRound = 1;
 
     constructor(roundDuration, roundRestTime, numberOfRounds, currentState)
     {
@@ -44,18 +48,82 @@ class Timer
         this.m_CurrentState = currentState;
     }
 
+    InitializeTimer()
+    {
+        this.m_RandomIndex = 0;
+        this.m_RoundCounter = 1;
+        this.m_RemainingTime = this.m_RoundDuration;
+        this.m_RemainingRestTime = this.m_RoundRestTime;
+        timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+        timerLabel.textContent = TimerLabelText.IDLETXT;
+    }
+
+    StartTimer()
+    {
+        this.PlayAudio(roundStartSound);
+        this.m_CurrentState = StateManager.WORKRUNNING;
+        timerInterval = setInterval(() => this.TimerStateManager(), 1000);
+    }
+    PauseTimer()
+    {
+        this.m_CurrentTimeRemaing = this.m_RemainingTime;
+        this.m_CurrnentRestTimeRemaining = this.m_RemainingRestTime;
+        this.m_CurrentRound = this.m_RoundCounter;
+        console.log(this.m_CurrentTimeRemaing);
+        clearInterval(timerInterval);
+    }
+
+    ResumeTimer()
+    {
+        this.m_RemainingTime = this.m_CurrentTimeRemaing;
+        this.m_RemainingRestTime = this.m_CurrnentRestTimeRemaining;
+        this.m_RoundCounter = this.m_CurrentRound;
+        this.m_CurrentState = StateManager.WORKRUNNING;
+        timerInterval = setInterval(() => this.TimerStateManager(), 1000);
+        console.log(this.m_RoundCounter);
+    }
+
+
+    ResetTimer()
+    {
+        this.m_CurrentState = StateManager.INIETIALSTAT;
+    }
+
+    FormatTimerText(remainingTime)
+    {
+        let minutes;
+        let seconds;
+
+        minutes = Math.floor(remainingTime / 60);
+        seconds = remainingTime % 60;
+
+        let formattedMinutes = String(minutes).padStart(2, '0');
+        let formattedSeconds = String(seconds).padStart(2, '0');
+
+        return `${formattedMinutes}:${formattedSeconds}`;
+    }
+
+    PlayAudio(audioSource)
+    {
+        audioSource.play();
+    }
+
     TimerStateManager()
     {
         // WORK TIMER RUNNING STATE
         switch (this.m_CurrentState)
         {
             case StateManager.INITIALSTATE:
+                randomIndex = 0;
                 this.InitializeTimer();
+                clearInterval(timerInterval);
                 break;
 
             case StateManager.WORKRUNNING:
+                randomIndex = Math.floor(Math.random() * ComboAudio.length);
                 this.m_RemainingTime--;
                 timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+                this.HandleComboCalls(randomIndex);
                 if (this.m_RemainingTime <= 0)
                 {
                     this.PlayAudio(roundEndSound);
@@ -72,75 +140,33 @@ class Timer
                 timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
                 if (this.m_RemainingRestTime <= 0 && this.m_RoundCounter < this.m_NumberOfRounds)
                 {
-                    this.m_CurrentState = StateManager.RESETTIMER;
+                    this.m_CurrentState = StateManager.NEXTROUND;
                 }
                 if (this.m_RemainingRestTime == 0 && this.m_RoundCounter == this.m_NumberOfRounds)
                 {
                     this.m_CurrentState = StateManager.INITIALSTATE;
                 }
                 break;
-            case StateManager.RESETTIMER:
+            case StateManager.NEXTROUND:
                 this.m_RoundCounter++;
-                this.m_RemainingRestTime = this.m_RoundRestTime;
                 this.m_RemainingTime = this.m_RoundDuration;
-                this.m_CurrentState = StateManager.WORKRUNNING;
+                this.m_RemainingRestTime = this.m_RoundRestTime;
+                timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+                timerLabel.textContent = TimerLabelText.RUNNINGTXT;
                 this.PlayAudio(roundStartSound);
+                this.m_CurrentState = StateManager.WORKRUNNING;
                 break;
         }
     }
 
-
-
-    InitializeTimer()
+    HandleComboCalls(randomIndex)
     {
-        clearInterval(timerInterval);
-        this.m_RoundCounter = 1;
-        this.m_RemainingTime = this.m_RoundDuration;
-        this.m_RemainingRestTime = this.m_RoundRestTime;
-        timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
-        timerLabel.textContent = TimerLabelText.IDLETXT;
-    }
-
-    StartTimer()
-    {
-        this.m_CurrentState = StateManager.WORKRUNNING;
-        this.PlayAudio(roundStartSound);
-        timerInterval = setInterval(() => this.TimerStateManager(), 1000);
-    }
-    PauseTimer() {}
-
-    ResumeTimer() {}
-
-    ResetTimer() {}
-
-    FormatTimerText(remainingTime)
-    {
-        let minutes;
-        let seconds;
-
-        minutes = Math.floor(remainingTime / 60);
-        seconds = remainingTime % 60;
-
-        let formattedMinutes = String(minutes).padStart(2, '0');
-        let formattedSeconds = String(seconds).padStart(2, '0');
-
-        return `${formattedMinutes}:${formattedSeconds}`;
-    }
-
-    PlayAudio(audioSource, ...index)
-    {
-        if (audioSource == [])
-        {
-            audioSource[i].play();
-        }
-        else
-        {
-            audioSource.play();
-        }
+        this.PlayAudio(ComboAudio[randomIndex]);
     }
 }
 
-const newTimer = new Timer(2, 2, 1, StateManager.INITIALSTATE);
+
+const newTimer = new Timer(10, 5, 2, StateManager.INITIALSTATE);
 newTimer.InitializeTimer();
 
 
