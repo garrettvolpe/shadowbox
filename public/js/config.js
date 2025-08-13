@@ -2,6 +2,7 @@
 
 const saveButton = document.getElementById('save-setting-bttn');
 const musicToggle = document.getElementById('music-toggle');
+const soundToggle = document.getElementById('sound-slider');
 
 
 const durationInput = document.getElementById('duration');
@@ -15,12 +16,13 @@ const SaveSetting = {
     savedRoundDurationMins: localStorage.getItem('saved-duration'),
     savedRestTimeMins: localStorage.getItem('saved-rest-time'),
     saveNumberOfRounds: localStorage.getItem('saved-round-amount'),
+    saveIsSoundOn: localStorage.getItem('save-sound-on')
 
 };
 
 class Setting
 {
-    constructor(savedRoundAmount, savedRoundDuration, savedRoundRestTime)
+    constructor(savedRoundAmount, savedRoundDuration, savedRoundRestTime, saveIsSoundOn)
     {
         if (localStorage.getItem('first-load') === null)
         {
@@ -28,14 +30,19 @@ class Setting
             document.getElementById('duration').value = defaultAmount;
             document.getElementById('rest-time').value = defaultAmount;
             localStorage.setItem('first-load', 'true');
+            localStorage.setItem('saved-round-amount', defaultAmount);
+            localStorage.setItem('saved-duration', defaultAmount);
+            localStorage.setItem('saved-rest-time', defaultAmount);
         }
         else
         {
             this.m_SavedRoundAmount = savedRoundAmount;
             this.m_SaveRoundDuration = savedRoundDuration;
             this.m_SaveRoundRestTime = savedRoundRestTime;
+            this
 
-            document.getElementById('number-rounds').value = this.m_SavedRoundAmount;
+                document.getElementById('number-rounds')
+                    .value = this.m_SavedRoundAmount;
             document.getElementById('duration').value = this.m_SaveRoundDuration;
             document.getElementById('rest-time').value = this.m_SaveRoundRestTime;
         }
@@ -51,6 +58,8 @@ class Setting
 
         this.m_SaveRoundRestTime = document.getElementById('rest-time').value;
         localStorage.setItem('saved-rest-time', this.m_SaveRoundRestTime);
+
+        this
     }
 }
 

@@ -1,3 +1,4 @@
+
 const timerDisplay = document.getElementById('timer-display');
 const timerLabel = document.getElementById('timer-label');
 
@@ -6,6 +7,8 @@ const stopButton = document.getElementById('stop-button');
 const pauseButton = document.getElementById('pause-button');
 const resumeButton = document.getElementById('resume-button');
 const resetButton = document.getElementById('reset-button');
+
+const defaultAmount = 3;
 
 // ENUM - JS doesnt have default enumerators //
 const StateManager =
@@ -26,15 +29,14 @@ const ComboAudio = [
 const SaveSetting = {
     savedRoundDurationMins: localStorage.getItem('saved-duration'),
     savedRestTimeMins: localStorage.getItem('saved-rest-time'),
-    saveNumberOfRounds: localStorage.getItem('saved-round-amount'),
+    savedNumberOfRounds: localStorage.getItem('saved-round-amount'),
+    savedIsSoundOn: localStorage.getItem('save-sound-on'),
+
 
     ConvertToSeconds(duration) {
         return duration * 60;
     }
-
-
-
-};
+}
 
 const roundStartSound = new Audio('./audio/misc/bell_start.mp3');
 const roundEndSound = new Audio('./audio/misc/bell_end.mp3');
@@ -44,6 +46,9 @@ let timerInterval;
 let comboInterval;
 let randomIndex;
 let currentClickCount;
+let savedDurationSeconds;
+let savedRestTimeSeconds;
+let savedNumberOfRounds;
 
 
 /*                      ////////// Timer Class Formatting //////////
@@ -84,6 +89,7 @@ class Timer
 
     StartTimer()
     {
+        currentClickCount = 0;
         if (this.m_CurrentState == StateManager.INITIALSTATE)
         {
             timerDisplay.style.color = 'GREEN';
@@ -132,9 +138,9 @@ class Timer
         currentClickCount++;
         if (this.m_CurrentState != StateManager.INITIALSTATE)
         {
+            currentClickCount = 0;
             this.InitializeTimer();
             this.m_CurrentState = StateManager.INITIALSTATE;
-            currentClickCount = 0;
         }
         this.CheckClickCount();
     }
@@ -143,6 +149,7 @@ class Timer
     {
         let minutes;
         let seconds;
+
 
         minutes = Math.floor(remainingTime / 60);
         seconds = remainingTime % 60;
@@ -238,13 +245,30 @@ class Timer
     }
 }
 
-let savedDurationSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRoundDurationMins);
-let savedRestTimeSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRestTimeMins);
-let savedNumberOfRounds = SaveSetting.saveNumberOfRounds;
+function CheckFirstLoad()
+{
+    if (localStorage.getItem('first-load') == null)
+    {
+        savedDurationSeconds = SaveSetting.ConvertToSeconds(defaultAmount);
+        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(defaultAmount);
+        savedNumberOfRounds = defaultAmount;
+        localStorage.setItem('first-load', 'true');
+        localStorage.setItem('saved-round-amount', defaultAmount);
+        localStorage.setItem('saved-duration', defaultAmount);
+        localStorage.setItem('saved-rest-time', defaultAmount);
+    }
+    else
+    {
+        savedDurationSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRoundDurationMins);
+        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRestTimeMins);
+        savedNumberOfRounds = SaveSetting.savedNumberOfRounds;
+    }
+}
 
+
+CheckFirstLoad();
 const newTimer = new Timer(savedDurationSeconds, savedRestTimeSeconds, savedNumberOfRounds, StateManager.INITIALSTATE);
 newTimer.InitializeTimer();
-
 
 startButton.addEventListener('click', () => newTimer.StartTimer());
 pauseButton.addEventListener('click', () => newTimer.PauseTimer());
