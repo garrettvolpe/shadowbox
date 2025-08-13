@@ -1,3 +1,5 @@
+
+
 const saveButton = document.getElementById('save-setting-bttn');
 const musicToggle = document.getElementById('music-toggle');
 
@@ -6,6 +8,8 @@ const durationInput = document.getElementById('duration');
 const restTimeInput = document.getElementById('rest-time');
 
 const difficultySlider = document.getElementById('difficulty-slider');
+
+const defaultAmount = 3;
 
 const SaveSetting = {
     savedRoundDurationMins: localStorage.getItem('saved-duration'),
@@ -16,15 +20,25 @@ const SaveSetting = {
 
 class Setting
 {
-    constructor(savedRoundAmount, savedRoundDuration, saveRoundRestTime)
+    constructor(savedRoundAmount, savedRoundDuration, savedRoundRestTime)
     {
-        this.m_SavedRoundAmount = savedRoundAmount;
-        this.m_SaveRoundDuration = savedRoundDuration;
-        this.m_SaveRoundRestTime = saveRoundRestTime;
+        if (localStorage.getItem('first-load') === null)
+        {
+            document.getElementById('number-rounds').value = defaultAmount;
+            document.getElementById('duration').value = defaultAmount;
+            document.getElementById('rest-time').value = defaultAmount;
+            localStorage.setItem('first-load', 'true');
+        }
+        else
+        {
+            this.m_SavedRoundAmount = savedRoundAmount;
+            this.m_SaveRoundDuration = savedRoundDuration;
+            this.m_SaveRoundRestTime = savedRoundRestTime;
 
-        document.getElementById('number-rounds').value = this.m_SavedRoundAmount;
-        document.getElementById('duration').value = this.m_SaveRoundDuration;
-        document.getElementById('rest-time').value = this.m_SaveRoundRestTime;
+            document.getElementById('number-rounds').value = this.m_SavedRoundAmount;
+            document.getElementById('duration').value = this.m_SaveRoundDuration;
+            document.getElementById('rest-time').value = this.m_SaveRoundRestTime;
+        }
     }
 
     HandleSaveSetting()
@@ -39,6 +53,7 @@ class Setting
         localStorage.setItem('saved-rest-time', this.m_SaveRoundRestTime);
     }
 }
+
 
 const userSettings =
     new Setting(SaveSetting.saveNumberOfRounds, SaveSetting.savedRoundDurationMins, SaveSetting.savedRestTimeMins);
