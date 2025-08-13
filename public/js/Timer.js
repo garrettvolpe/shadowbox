@@ -44,7 +44,7 @@ class Timer
         this.m_CurrentState = currentState;
     }
 
-    Tick()
+    TimerStateManager()
     {
         // WORK TIMER RUNNING STATE
         switch (this.m_CurrentState)
@@ -105,7 +105,7 @@ class Timer
     {
         this.m_CurrentState = StateManager.WORKRUNNING;
         this.PlayAudio(roundStartSound);
-        timerInterval = setInterval(() => this.Tick(), 1000);
+        timerInterval = setInterval(() => this.TimerStateManager(), 1000);
     }
     PauseTimer() {}
 
