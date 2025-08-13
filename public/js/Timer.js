@@ -12,8 +12,13 @@ const TimerState = Object.freeze({
     PAUSED: true
 });
 
-let timer; 
+let timerInterval; 
 
+
+/*                      ////////// Timer Class Formatting //////////
+        -- Any variable with m_[VariableName] is a member of the class and
+        cannot be used outside the scope of said class. 
+*/ 
 class Timer {
     constructor(roundDuration, roundRestTime, numberOfRounds){
         this.m_RoundDuration = roundDuration; 
@@ -29,19 +34,19 @@ class Timer {
 
     StartTimer()
     {
-        timer = setInterval(() => {
+        timerInterval = setInterval(() => {
            this.UpdateTimer();
         }, 1000);    
     }
 
     PauseTimer()
     {
-        clearTimeout(timer);
+        clearTimeout(timerInterval);
     }
 
     ResumeTimer()
     {
-        timer = setInterval(() => {
+        timerInterval = setInterval(() => {
             this.UpdateTimer();
         }, 1000);
     }
