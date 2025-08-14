@@ -32,7 +32,7 @@ const SaveSetting = {
     savedRestTimeMins: localStorage.getItem('saved-rest-time'),
     savedNumberOfRounds: localStorage.getItem('saved-round-amount'),
     savedIsSoundOn: localStorage.getItem('save-sound-on'),
-
+    savedDefualtAmount: localStorage.getItem('save-default-amount'),
 
     ConvertToSeconds(duration) {
         return duration * 60;
@@ -269,13 +269,13 @@ function CheckFirstLoad()
 {
     if (localStorage.getItem('first-load') == null)
     {
-        savedDurationSeconds = SaveSetting.ConvertToSeconds(defaultAmount);
-        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(defaultAmount);
-        savedNumberOfRounds = defaultAmount;
+        savedDurationSeconds = SaveSetting.ConvertToSeconds(savedDefaultAmount);
+        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(savedDefaultAmount);
+        savedNumberOfRounds = savedDefaultAmount;
         localStorage.setItem('first-load', 'true');
-        localStorage.setItem('saved-round-amount', defaultAmount);
-        localStorage.setItem('saved-duration', defaultAmount);
-        localStorage.setItem('saved-rest-time', defaultAmount);
+        localStorage.setItem('saved-round-amount', savedDefaultAmount);
+        localStorage.setItem('saved-duration', savedDefaultAmount);
+        localStorage.setItem('saved-rest-time', savedDefaultAmount);
     }
     else
     {
