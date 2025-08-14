@@ -110,6 +110,7 @@ class Timer
         this.HandleComboCalls(randomIndex);
         if (this.m_RemainingTime < 1)
         {
+            timerLabel.textContent = TimerLabelText.RESTTXT;
             this.m_CurrentState = StateManager.RESTRUNNING;
             timerDisplay.style.color = FontColor.RED;
             timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
@@ -130,6 +131,8 @@ class Timer
         }
         if (this.m_RemainingRestTime < 1 && this.m_RoundCounter == this.m_NumberOfRounds)
         {
+            pauseButton.classList.add('hidden');
+            startButton.classList.remove('hidden');
             this.m_CurrentState = StateManager.INITIALSTATE;
             timerLabel.textContent = TimerLabelText.IDLETXT;
             timerDisplay.textContent = this.FormatTimerText(this.m_RoundDuration);
@@ -155,15 +158,16 @@ class Timer
         clearInterval(timerInterval);
         pauseButton.classList.add('hidden');
         resumeButton.classList.remove('hidden');
+        console.log
     }
 
     HandleResumeRound()
     {
-        timerDisplay.style.color = FontColor.GREEN;
         this.m_RemainingTime = this.m_CurrentTimeRemaing;
         this.m_RemainingRestTime = this.m_CurrnentRestTimeRemaining;
         this.m_RoundCounter = this.m_CurrentRound;
         this.m_CurrentState = StateManager.WORKRUNNING;
+        timerDisplay.style.color = FontColor.GREEN;
         console.log('TEST');
         currentClickCount = 0;
         pauseButton.classList.remove('hidden');
@@ -175,11 +179,14 @@ class Timer
         this.PlayAudio(ComboAudio[randomIndex]);
     }
 
-    async HandleAudioStates()
+    HandleAudioStates()
     {
         let shouldLoop = true;
 
-
+        if (this.m_CurrentState != StateManager.WORKRUNNING)
+        {
+            this.PauseAudio(backgroundMusic, roundEndSound, roundStartSound)
+        }
         if (this.m_CurrentState == StateManager.WORKRUNNING)
         {
             this.PlayAudio(backgroundMusic, shouldLoop);
@@ -204,7 +211,6 @@ class Timer
         }
     }
 
-
     PauseTimer()
     {
         currentClickCount++;
@@ -219,7 +225,7 @@ class Timer
     ResumeTimer()
     {
         currentClickCount++;
-        if (this.m_CurrentState == StateManager.PAUSEROUND)
+        if (this.m_CurrentState === StateManager.PAUSEROUND)
         {
             this.m_CurrentState = StateManager.RESUMEROUND;
             timerInterval = setInterval(() => this.TimerStateManager(), 1000);
@@ -268,7 +274,7 @@ class Timer
         }
     }
 
-    PauseAudio(audioSource)
+    PauseAudio(audioSource, ...otherAudio)
     {
         audioSource.pause();
         audioSource.currentTime = 0;
@@ -337,6 +343,9 @@ function CheckFirstLoad()
     }
 }
 
+///////////////////////////**MAIN**/////////////////////////////
+//////////////////////////////////////////////////////////
+//----------------------------------------------------//
 
 CheckFirstLoad();
 const newTimer = new Timer(savedDurationSeconds, savedRestTimeSeconds, savedNumberOfRounds, StateManager.INITIALSTATE);
