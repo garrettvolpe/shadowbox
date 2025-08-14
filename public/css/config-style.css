@@ -1,0 +1,105 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background-color: #0b0d10;
+  color: #e6e1d8;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px;
+}
+
+/* Main container */
+main {
+  background-color: #15171b;
+  border-radius: 8px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Header */
+h1 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+  color: #e6e1d8;
+}
+
+/* Fieldsets */
+fieldset {
+  border: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+legend {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Labels and inputs */
+label {
+  display: block;
+  margin: 8px 0 4px;
+  font-size: 0.9rem;
+}
+
+input[type="number"],
+input[type="text"],
+input[type="range"],
+select {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  margin-right: 6px;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+button {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background-color: #1f2023;
+  color: white;
+}
+
+button[type="submit"]:hover {
+  filter: brightness(1.05);
+}
+
+button[type="reset"] {
+  background-color: #5b4a73;
+  color: white;
+}
+
+button[type="reset"]:hover {
+  filter: brightness(1.05);
+}

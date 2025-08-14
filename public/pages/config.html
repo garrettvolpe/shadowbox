@@ -1,72 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Config</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Configure Workout</title>
+    <link rel="stylesheet" href="/css/config-style.css" />
+  </head>
+  <body>
+    <main id="config" aria-labelledby="config-title">
+      <header>
+        <p><a href="/index.html"><---</a></p>
+        <h1 id="config-title">Configure Workout</h1>
+      </header>
 
+      <form id="config-form" class="form-config">
+        <fieldset>
+          <legend>Mode</legend>
+          <label>
+            <input type="radio" name="mode" value="basic" checked />
+            Basic
+          </label>
+          <label>
+            <input type="radio" name="mode" value="advanced" />
+            Advanced
+          </label>
+        </fieldset>
 
-<nav id="config-nav-bar">
-    <div id="image-container">
-        <a href="/index.html"><img id="go-back" src="/images/arrow.png"></a></li>
-    </div>
+        <fieldset>
+          <legend>Workout Settings</legend>
 
-    <div id="title-container">
-        <h1 class="label-style">Configure Workout</h1>
-    </div>
-</nav>
+          <label for="rounds">Rounds:</label>
+          <input
+            type="number"
+            id="rounds"
+            name="rounds"
+            min="1"
+            step="1"
+            value="3"
+          />
 
-<script type="module" src="/js/config.js"></script>
-<body>
-    <div class="config-container">
-        <div class="row">
-            <div class="container column">
-                <div class="hidden">
-                <label class="label-style label-format">Basic / Advanced</label>
-                <label class="switch">
-                    <input type="checkbox" id="difficulty-slider">
-                    <span class="slider round"></span>
-                  </label>
-                  </div>
-                  
-            </div>
-            
+          <label for="round-duration">Round Duration (minutes):</label>
+          <input
+            type="number"
+            id="round-duration"
+            name="roundDuration"
+            step="0.1"
+            value="3"
+          />
+
+          <label for="rest-time">Rest Time (minutes):</label>
+          <input
+            type="number"
+            id="rest-time"
+            name="restTime"
+            step="0.1"
+            value="3"
+          />
+        </fieldset>
+
+        <fieldset>
+          <legend>Audio</legend>
+          <label>
+            <input type="checkbox" id="music-toggle" name="music" />
+            Background Music
+          </label>
+          <label>
+            <input type="checkbox" id="sound-toggle" name="sound" />
+            Sound
+          </label>
+        </fieldset>
+
+        <div class="actions">
+          <button
+            id="save-Btn"
+            class="btn btn-main"
+            type="submit"
+            id="save-setting-bttn"
+          >
+            Save Settings
+          </button>
+          <button id="resetButton" class="btn btn-second" type="reset">
+            Restore Defaults
+          </button>
         </div>
-        <div class="row">
-            <div class="container column">
-                <label class="label-style" for="rounds">Rounds:</label>
-                <input class="input-style" type="number" id="number-rounds" min="1" max="10" step="1" value="3">
-                <label class="label-style" for="duration">Round Duration (minutes):</label>
-                <input class="input-style" type="number" id="duration" min="1" step="1">
-                <label class="label-style" for="rest-time">Rest Time (minutes):</label>
-                <input class="input-style" type="number" id="rest-time" min="1" step="1">
-            </div> 
-            <div class="container column">
-                <label class="label-style label-format music-control">Background Music</label>
-                    <label class="switch">
-                        <input type="checkbox" id="music-toggle" >
-                        <span class="slider round"></span>
-                    </label>
-                    <label class="label-style label-format">Sound</label>
-                    <label id="sound-slider" class="switch">
-                        <input type="checkbox"  checked>
-                        <span class="slider round"></span>
-                    </label>
-            </div>      
-        </div>
-
-        <div class="row">
-            <div class="container-style column">
-                <button id="save-setting-bttn" class="button-style">Save Settings</button>
-                <button id="restore-defaults" class="button-style">Restore Defaults</button>
-            </div>
-        </div>
-        
-    </div>
-           
-    
-</body>
-
+      </form>
+    </main>
+    <script src="/js/config.js"></script>
+  </body>
 </html>

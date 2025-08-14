@@ -1,12 +1,10 @@
 
-const timerDisplay = document.getElementById('timer-display');
+const timerDisplay = document.getElementById('time');
 const timerLabel = document.getElementById('timer-label');
-
-const startButton = document.getElementById('start-button');
-const stopButton = document.getElementById('stop-button');
-const pauseButton = document.getElementById('pause-button');
-const resumeButton = document.getElementById('resume-button');
-const resetButton = document.getElementById('reset-button');
+const startButton = document.getElementById('start-Btn');
+const pauseButton = document.getElementById('pause-Btn');
+const resumeButton = document.getElementById('resume-Btn');
+const resetButton = document.getElementById('reset-Btn');
 
 const defaultAmount = 3;
 
@@ -19,6 +17,9 @@ const TimerLabelText = Object.freeze({
     RUNNINGTXT: 'WORK',
     RESTTXT: 'REST',
 });
+
+const FontColor = Object.freeze({GREEN: '#6FCF97', RED: '#E57373', DEFUALT: '#e6e1d8'});
+
 
 const ComboAudio = [
     new Audio('./audio/basics/basic1.mp3'),
@@ -75,8 +76,7 @@ class Timer
     InitializeTimer()
     {
         currentClickCount = 0;
-        timerDisplay.style.transitionDuration = '.3s';
-        timerDisplay.style.color = '#007bff'
+        timerDisplay.style.color = FontColor.DEFUALT;
         startButton.classList.remove('hidden');
         resumeButton.classList.add('hidden');
         pauseButton.classList.add('hidden');
@@ -94,7 +94,7 @@ class Timer
         currentClickCount = 0;
         if (this.m_CurrentState == StateManager.INITIALSTATE)
         {
-            timerDisplay.style.color = 'GREEN';
+            timerDisplay.style.color = '#4CAF50';
             startButton.classList.add('hidden');
             pauseButton.classList.remove('hidden');
             resumeButton.classList.remove('hidden');
@@ -123,14 +123,14 @@ class Timer
 
     HandleResetTimer()
     {
-        timerDisplay.style.color = 'RED';
+        timerDisplay.style.color = FontColor.RED;
         this.m_RemainingRestTime--;
         timerLabel.textContent = TimerLabelText.RESTTXT;
         timerDisplay.textContent = this.FormatTimerText(this.m_RemainingRestTime);
         if (this.m_RemainingRestTime <= 0 && this.m_RoundCounter < this.m_NumberOfRounds)
         {
             this.m_CurrentState = StateManager.NEXTROUND;
-            timerDisplay.style.color = 'GREEN';
+            timerDisplay.style.color = FontColor.GREEN;
         }
         if (this.m_RemainingRestTime == 0 && this.m_RoundCounter == this.m_NumberOfRounds)
         {
@@ -182,7 +182,7 @@ class Timer
         console.log(currentClickCount);
         if (this.m_CurrentState == StateManager.PAUSEROUND)
         {
-            timerDisplay.style.color = 'GREEN';
+            timerDisplay.style.color = FontColor.GREEN;
             this.m_RemainingTime = this.m_CurrentTimeRemaing;
             this.m_RemainingRestTime = this.m_CurrnentRestTimeRemaining;
             this.m_RoundCounter = this.m_CurrentRound;
@@ -254,8 +254,6 @@ class Timer
                 break;
         }
     }
-
-
 
     CheckClickCount()
     {

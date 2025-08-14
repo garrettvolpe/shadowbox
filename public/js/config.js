@@ -1,14 +1,13 @@
 
 
-const saveButton = document.getElementById('save-setting-bttn');
-const musicToggle = document.getElementById('music-toggle');
-const soundToggle = document.getElementById('sound-slider');
+const saveButton = document.getElementById('save-Btn');
 
 
-const durationInput = document.getElementById('duration');
-const restTimeInput = document.getElementById('rest-time');
+const durationSetting = document.getElementById('round-duration');
+const restTimeSetting = document.getElementById('rest-time');
+const roundAmountSetting = document.getElementById('rounds');
 
-const difficultySlider = document.getElementById('difficulty-slider');
+
 
 const defaultAmount = 3;
 
@@ -26,8 +25,8 @@ class Setting
     {
         if (localStorage.getItem('first-load') === null)
         {
-            document.getElementById('number-rounds').value = defaultAmount;
-            document.getElementById('duration').value = defaultAmount;
+            document.getElementById('rounds').value = defaultAmount;
+            document.getElementById('round-duration').value = defaultAmount;
             document.getElementById('rest-time').value = defaultAmount;
             localStorage.setItem('first-load', 'true');
             localStorage.setItem('saved-round-amount', defaultAmount);
@@ -41,19 +40,19 @@ class Setting
             this.m_SaveRoundRestTime = savedRoundRestTime;
             this
 
-                document.getElementById('number-rounds')
+                document.getElementById('rounds')
                     .value = this.m_SavedRoundAmount;
-            document.getElementById('duration').value = this.m_SaveRoundDuration;
+            document.getElementById('round-duration').value = this.m_SaveRoundDuration;
             document.getElementById('rest-time').value = this.m_SaveRoundRestTime;
         }
     }
 
     HandleSaveSetting()
     {
-        this.m_SavedRoundAmount = document.getElementById('number-rounds').value;
+        this.m_SavedRoundAmount = document.getElementById('rounds').value;
         localStorage.setItem('saved-round-amount', this.m_SavedRoundAmount);
 
-        this.m_SavedRoundAmount = document.getElementById('duration').value;
+        this.m_SavedRoundAmount = document.getElementById('round-duration').value;
         localStorage.setItem('saved-duration', this.m_SavedRoundAmount);
 
         this.m_SaveRoundRestTime = document.getElementById('rest-time').value;
