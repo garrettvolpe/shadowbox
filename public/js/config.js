@@ -1,23 +1,7 @@
 
-
 const saveButton = document.getElementById('save-Btn');
 
 
-const durationSetting = document.getElementById('round-duration');
-const restTimeSetting = document.getElementById('rest-time');
-const roundAmountSetting = document.getElementById('rounds');
-
-
-
-const defaultAmount = 3;
-
-const SaveSetting = {
-    savedRoundDurationMins: localStorage.getItem('saved-duration'),
-    savedRestTimeMins: localStorage.getItem('saved-rest-time'),
-    saveNumberOfRounds: localStorage.getItem('saved-round-amount'),
-    saveIsSoundOn: localStorage.getItem('save-sound-on')
-
-};
 
 class Setting
 {

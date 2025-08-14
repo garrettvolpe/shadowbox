@@ -13,11 +13,14 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/config-style.css" />
   </head>
   <body>
     <main class="card" role="main" aria-labelledby="app-title">
       <div class="icon" aria-hidden="true">
-        <a href="pages/config.html">⚙️</a>
+        <button id="setting-Btn" class="btn btn-second" type="button">
+          Configure
+        </button>
       </div>
 
       <h1 id="app-title" class="title">SHADOWBOX<br />TIMER</h1>
@@ -41,8 +44,88 @@
       </div>
 
       <p class="copyright">© 2025 BBB Designs</p>
+
+      <div id="config" class="backdrop hidden" aria-labelledby="config-title">
+        <header>
+          <p><a href="/index.html"><---</a></p>
+          <h1 id="config-title">Configure Workout</h1>
+        </header>
+
+        <form id="config-form" class="form-config">
+          <fieldset>
+            <legend>Mode</legend>
+            <label>
+              <input type="radio" name="mode" value="kick-boxing" checked />
+              Kickboxer
+            </label>
+            <label>
+              <input type="radio" name="mode" value="boxing" />
+              Boxer
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Workout Settings</legend>
+
+            <label for="rounds">Rounds:</label>
+            <input
+              type="number"
+              id="rounds"
+              name="rounds"
+              min="1"
+              step="1"
+              value="3"
+            />
+
+            <label for="round-duration">Round Duration (minutes):</label>
+            <input
+              type="number"
+              id="round-duration"
+              name="roundDuration"
+              step="0.1"
+              value="3"
+            />
+
+            <label for="rest-time">Rest Time (minutes):</label>
+            <input
+              type="number"
+              id="rest-time"
+              name="restTime"
+              step="0.1"
+              value="3"
+            />
+          </fieldset>
+
+          <fieldset>
+            <legend>Audio</legend>
+            <label>
+              <input type="checkbox" id="music-toggle" name="music" />
+              Background Music
+            </label>
+            <label>
+              <input type="checkbox" id="sound-toggle" name="sound" />
+              Sound
+            </label>
+          </fieldset>
+
+          <div class="actions">
+            <button
+              id="save-Btn"
+              class="btn btn-main"
+              type="submit"
+              id="save-setting-bttn"
+            >
+              Save Settings
+            </button>
+            <button id="resetButton" class="btn btn-second" type="reset">
+              Restore Defaults
+            </button>
+          </div>
+        </form>
+      </div>
+      <script src="/js/Timer.js"></script>
+      <script src="/js/config.js"></script>
+      <noscript>This app requires JavaScript to run the timer.</noscript>
     </main>
-    <script src="js/Timer.js"></script>
-    <noscript>This app requires JavaScript to run the timer.</noscript>
   </body>
 </html>

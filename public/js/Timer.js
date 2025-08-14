@@ -1,12 +1,10 @@
-
 const timerDisplay = document.getElementById('time');
 const timerLabel = document.getElementById('timer-label');
 const startButton = document.getElementById('start-Btn');
 const pauseButton = document.getElementById('pause-Btn');
 const resumeButton = document.getElementById('resume-Btn');
 const resetButton = document.getElementById('reset-Btn');
-
-const defaultAmount = 3;
+const settingButton = document.getElementById('setting-Btn');
 
 
 const StateManager =
@@ -94,10 +92,9 @@ class Timer
         currentClickCount = 0;
         if (this.m_CurrentState == StateManager.INITIALSTATE)
         {
-            timerDisplay.style.color = '#4CAF50';
+            timerDisplay.style.color = FontColor.GREEN;
             startButton.classList.add('hidden');
             pauseButton.classList.remove('hidden');
-            resumeButton.classList.remove('hidden');
             this.PlayAudio(roundStartSound);
             this.m_CurrentState = StateManager.WORKRUNNING;
             timerInterval = setInterval(() => this.TimerStateManager(), 1000);
@@ -158,6 +155,8 @@ class Timer
         this.m_CurrentRound = this.m_RoundCounter;
         console.log(this.m_CurrentTimeRemaing);
         clearInterval(timerInterval);
+        pauseButton.classList.add('hidden');
+        resumeButton.classList.remove('hidden');
     }
 
     HandleComboCalls(randomIndex)
@@ -190,6 +189,8 @@ class Timer
             timerInterval = setInterval(() => this.TimerStateManager(), 1000);
             console.log(this.m_RoundCounter);
             currentClickCount = 0;
+            pauseButton.classList.remove('hidden');
+            resumeButton.classList.add('hidden');
         }
         this.CheckClickCount();
     }
@@ -293,6 +294,9 @@ startButton.addEventListener('click', () => newTimer.StartTimer());
 pauseButton.addEventListener('click', () => newTimer.PauseTimer());
 resumeButton.addEventListener('click', () => newTimer.ResumeTimer());
 resetButton.addEventListener('click', () => newTimer.ResetTimer());
+settingButton.addEventListener('click', function() {
+    document.getElementById('config').classList.remove('hidden');
+});
 
 DebugTimer(newTimer);
 

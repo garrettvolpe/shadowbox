@@ -7,8 +7,13 @@ body {
   background-color: #0b0d10;
   color: #e6e1d8;
   font-family: "Inter", "Poppins", "Nunito Sans", sans-serif;
+  height: 100%;
+  margin: 0;
 }
 
+#setting-Btn {
+  background-color: #ffb343;
+}
 .card {
   display: flex;
   flex-direction: column;
@@ -16,28 +21,31 @@ body {
   text-align: center;
   background-color: #15171b;
   border-radius: 16px;
-  padding: 5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0 0.4);
+  padding: 32px; /* was 5rem */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   max-width: 720px;
+  width: min(92vw, 720px);
   margin: 72px auto;
   border: 1px solid rgba(255, 255, 255, 0.02);
-  height: 700px;
 }
 
 h1.title {
   color: #e6e1d8;
   font-weight: 700;
   letter-spacing: 0.5px;
+  margin: 0 0 8px 0;
 }
 
 .subtitle {
   font-size: 14px;
   color: #b3aea6;
+  margin: 0 0 24px 0;
 }
 
 h2.prompt {
   font-weight: 700;
   font-size: 20px;
+  margin: 12px 0 16px 0;
 }
 
 .copyright {
@@ -49,11 +57,14 @@ h2.prompt {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #0c1016;
+  background: transparent;
   border: 2px solid #2b2d31;
   border-radius: 16px;
   padding: 28px 24px;
   text-align: center;
+  margin: 12px 0 20px 0;
+  width: min(92vw, 480px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .timer .value {
@@ -78,42 +89,8 @@ h2.prompt {
 .btn-main {
   background-color: #1f2023;
 }
-
 .btn-second {
   background-color: #5b4a73;
-}
-
-.btn + .btn {
-  margin-left: 16px;
-}
-
-.btn:hover {
-  filter: brightness(1.05);
-}
-
-.btn:active {
-  transform: translateY(1px);
-}
-
-.btn:focus-visible {
-  outline: 2px solid #e6e1d8;
-}
-
-.icon {
-  margin-bottom: 20px;
-}
-
-.title {
-  margin: 0 0 8px 0;
-}
-
-.subtitle {
-  margin: 0 0 24px 0;
-}
-
-.timer {
-  margin: 12px 0 20px 0;
-  width: 60%;
 }
 
 .actions {
@@ -123,7 +100,46 @@ h2.prompt {
   margin-top: 12px;
 }
 
-.timer {
-  box-shadow: 0 4px 20px rgba(0, 0, 0 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+/* Interactions */
+.btn:hover {
+  filter: brightness(1.05);
+  cursor: pointer;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:focus-visible {
+  outline: 2px solid #e6e1d8;
+  outline-offset: 2px;
+}
+
+.icon {
+  margin-bottom: 20px;
+}
+
+.timer.running .value {
+  color: #6fcf97;
+}
+.timer.paused .value {
+  color: #e57373;
+}
+.hidden {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 24px;
+    margin: 48px auto;
+  }
+  .timer .value {
+    font-size: clamp(40px, 12vw, 56px);
+  }
+  .actions {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    min-width: 120px;
+  }
 }
