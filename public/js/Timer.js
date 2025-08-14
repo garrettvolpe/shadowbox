@@ -31,7 +31,7 @@ const SaveSetting = {
     savedRoundDurationMins: localStorage.getItem('saved-duration'),
     savedRestTimeMins: localStorage.getItem('saved-rest-time'),
     savedNumberOfRounds: localStorage.getItem('saved-round-amount'),
-    savedIsSoundOn: localStorage.getItem('save-sound-on'),
+    savedIsSoundOn: localStorage.getItem('music-checkbox'),
     savedDefualtAmount: localStorage.getItem('save-default-amount'),
 
     ConvertToSeconds(duration) {
@@ -144,6 +144,7 @@ class Timer
     HandleNextRound()
     {
         timerDisplay.textContent = this.FormatTimerText(this.m_RoundDuration);
+        timerLabel.textContent = TimerLabelText.RUNNINGTXT;
         this.m_RoundCounter++;
         this.m_RemainingTime = this.m_RoundDuration;
         this.m_RemainingRestTime = this.m_RoundRestTime;
@@ -189,7 +190,7 @@ class Timer
         }
         if (this.m_CurrentState == StateManager.WORKRUNNING)
         {
-            this.PlayAudio(backgroundMusic, shouldLoop);
+            this.PlayAudio(backgroundMusic, shouldLoop, SaveSetting.savedIsSoundOn);
             if (this.m_RemainingTime === this.m_RoundDuration)
             {
                 this.PlayAudio(roundStartSound, !shouldLoop);
@@ -204,10 +205,6 @@ class Timer
         if (this.m_CurrentState == StateManager.RESTRUNNING)
         {
             this.PauseAudio(backgroundMusic);
-            if (this.m_RemainingRestTime < 2)
-            {
-                this.PlayAudio(roundEndSound, !shouldLoop);
-            }
         }
     }
 
@@ -236,6 +233,7 @@ class Timer
 
     ResetTimer()
     {
+        this.PauseAudio(backgroundMusic)
         currentClickCount++;
         if (this.m_CurrentState != StateManager.INITIALSTATE)
         {
@@ -261,9 +259,13 @@ class Timer
         return `${formattedMinutes}:${formattedSeconds}`;
     }
 
-    PlayAudio(audioSource, shouldLoop)
+    PlayAudio(audioSource, shouldLoop, isSoundAllowed)
     {
-        if (shouldLoop)
+        if (isSoundAllowed == 'false')
+        {
+            return;
+        }
+        else if (shouldLoop)
         {
             audioSource.play();
         }
