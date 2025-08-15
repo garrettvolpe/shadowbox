@@ -1,7 +1,8 @@
 
 const saveButton = document.getElementById('save-Btn');
-let musicCheckbox = document.getElementById('music-toggle');
-const defaultAmount = 3;
+const musicCheckbox = document.getElementById('music-toggle');
+
+localStorage.setItem('save-default-amount', SaveSetting.savedDefualtAmount);
 
 let isChecked = true;
 
@@ -10,6 +11,7 @@ class Setting
 {
     constructor(savedRoundAmount, savedRoundDuration, savedRoundRestTime, saveIsBGMusic)
     {
+        const defaultAmount = 3;
         const m_MusicCheckboxLabel = 'music-checkbox';
 
         if (localStorage.getItem('first-load') === null)
@@ -19,8 +21,6 @@ class Setting
             document.getElementById('rounds').value = defaultAmount;
             document.getElementById('round-duration').value = defaultAmount;
             document.getElementById('rest-time').value = defaultAmount;
-
-
 
             localStorage.setItem('first-load', 'true');
             localStorage.setItem('saved-round-amount', defaultAmount);

@@ -36,6 +36,7 @@ fieldset {
 }
 
 label {
+  display: block;
   color: #e6e1d8;
   font-weight: 600;
   font-size: 0.95rem;
@@ -58,8 +59,8 @@ input[type="checkbox"],
 input[type="radio"] {
   width: 18px;
   height: 18px;
-  vertical-align: middle;
   margin-right: 8px;
+  justify-content: left;
 }
 
 input:focus,

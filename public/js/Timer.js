@@ -19,11 +19,24 @@ const FontColor = Object.freeze({GREEN: '#6FCF97', RED: '#E57373', DEFUALT: '#e6
 
 const backgroundMusic = new Audio('./audio/music.mp3');
 
-const ComboAudio = [
-    new Audio('./audio/basics/basic1.mp3'),
-    new Audio('./audio/basics/basic3.mp3'),
-    new Audio('./audio/basics/basic4.mp3'),
-    new Audio('./audio/combos/1,2,knee.mp3')
+const BoxerBasicAudio = [
+    new Audio('/audio/boxing-basic/1-jab.mp3'),
+    new Audio('/audio/boxing-basic/2-cross.mp3'),
+    new Audio('/audio/boxing-basic/3-leed-hook.mp3'),
+    new Audio('/audio/boxing-basic/4-rear-uppercut.mp3'),
+    new Audio('/audio/boxing-basic/5-leed-uppercut.mp3'),
+    new Audio('/audio/boxing-basic/6-rear-hook.mp3')
+];
+
+const MuaythaiBasic = [
+    new Audio('/audio/basics-thai/1.mp3'),
+    new Audio('/audio/basics-thai/2.mp3'),
+    new Audio('/audio/basics-thai/3.mp3'),
+    new Audio('/audio/basics-thai/4.mp3'),
+    new Audio('/audio/basics-thai/5.mp3'),
+    new Audio('/audio/basics-thai/6.mp3'),
+    new Audio('/audio/basics-thai/7.mp3'),
+
 
 ];
 
@@ -39,17 +52,21 @@ const SaveSetting = {
     }
 }
 
-const roundStartSound = new Audio('./audio/misc/bell_start.mp3');
-const roundEndSound = new Audio('./audio/misc/bell_end.mp3');
-const maxClickAllowed = 1;
+const roundStartSound = new Audio('/audio/sfx/boxing-bell.mp3');
+const roundEndSound = new Audio('/audio/sfx/boxing-bell-single.mp3');
+const crowdNoise = new Audio('/audio/crowd-noise/CrowdNoise1.mp3');
 
 let timerInterval;
 let comboInterval;
-let randomIndex;
 let currentClickCount;
 let savedDurationSeconds;
 let savedRestTimeSeconds;
 let savedNumberOfRounds;
+let randomIndex;
+let hasRun;
+let currentDelayTime = 1;
+let maxDelayTime = 4;
+let maxClickAllowed = 1;
 
 
 /*                      ////////// Timer Class Formatting //////////
@@ -73,12 +90,12 @@ class Timer
 
     InitializeTimer()
     {
+        hasRun = false;
         currentClickCount = 0;
         timerDisplay.style.color = FontColor.DEFUALT;
         startButton.classList.remove('hidden');
         resumeButton.classList.add('hidden');
         pauseButton.classList.add('hidden');
-        this.m_RandomIndex = 0;
         this.m_RoundCounter = 1;
         this.m_RemainingTime = this.m_RoundDuration;
         this.m_RemainingRestTime = this.m_RoundRestTime;
@@ -103,11 +120,9 @@ class Timer
     }
     HandleWorkTimer()
     {
-        randomIndex = Math.floor(Math.random() * ComboAudio.length);
         this.m_RemainingTime--;
         timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
         timerLabel.textContent = TimerLabelText.RUNNINGTXT;
-        this.HandleComboCalls(randomIndex);
         if (this.m_RemainingTime < 1)
         {
             timerLabel.textContent = TimerLabelText.RESTTXT;
@@ -175,49 +190,22 @@ class Timer
         resumeButton.classList.add('hidden');
     }
 
-    HandleComboCalls(randomIndex)
+    HandleComboCalls(audioArr)
     {
-        this.PlayAudio(ComboAudio[randomIndex]);
-    }
-
-    HandleAudioStates()
-    {
-        let shouldLoop = true;
-
-        if (this.m_CurrentState != StateManager.WORKRUNNING)
+        if (currentDelayTime < maxDelayTime)
         {
-            this.PauseAudio(backgroundMusic, roundEndSound, roundStartSound)
-        }
-        if (this.m_CurrentState == StateManager.WORKRUNNING)
-        {
-            this.PlayAudio(backgroundMusic, shouldLoop, SaveSetting.savedIsSoundOn);
-            if (this.m_RemainingTime === this.m_RoundDuration)
-            {
-                this.PlayAudio(roundStartSound, !shouldLoop);
-            }
-            if (this.m_RemainingTime < 2)
-            {
-                this.PlayAudio(roundEndSound, !shouldLoop);
-            }
+            currentDelayTime++;
         }
 
-
-        if (this.m_CurrentState == StateManager.RESTRUNNING)
+        if (currentDelayTime == maxDelayTime)
         {
-            this.PauseAudio(backgroundMusic);
+            randomIndex = Math.floor(Math.random() * audioArr.length);
+            this.PlayAudio(audioArr[randomIndex]);
+            currentDelayTime = 1;
         }
     }
 
-    PauseTimer()
-    {
-        currentClickCount++;
-        if (this.m_CurrentState != StateManager.PAUSEROUND)
-        {
-            this.m_CurrentState = StateManager.PAUSEROUND;
-            currentClickCount = 0;
-        }
-        this.CheckClickCount();
-    }
+
 
     ResumeTimer()
     {
@@ -233,7 +221,8 @@ class Timer
 
     ResetTimer()
     {
-        this.PauseAudio(backgroundMusic)
+        this.PauseAudio(backgroundMusic);
+        this.PauseAudio(crowdNoise);
         currentClickCount++;
         if (this.m_CurrentState != StateManager.INITIALSTATE)
         {
@@ -259,7 +248,7 @@ class Timer
         return `${formattedMinutes}:${formattedSeconds}`;
     }
 
-    PlayAudio(audioSource, shouldLoop, isSoundAllowed)
+    PlayAudio(audioSource, shouldLoop, isSoundAllowed, volumeLevel)
     {
         if (isSoundAllowed == 'false')
         {
@@ -267,19 +256,69 @@ class Timer
         }
         else if (shouldLoop)
         {
+            if (volumeLevel != null)
+            {
+                audioSource.volume = volumeLevel;
+            }
             audioSource.play();
         }
         else
         {
+            if (volumeLevel != null)
+            {
+                audioSource.volume = volumeLevel;
+            }
             audioSource.loop = false;
             audioSource.play();
         }
     }
 
-    PauseAudio(audioSource, ...otherAudio)
+    PauseAudio(audioSource)
     {
         audioSource.pause();
         audioSource.currentTime = 0;
+    }
+
+    AudioStateManager()
+    {
+        let shouldLoop = true;
+
+        if (this.m_CurrentState != StateManager.WORKRUNNING)
+        {
+            this.PauseAudio(backgroundMusic, roundEndSound, roundStartSound);
+            this.PauseAudio(crowdNoise);
+        }
+        if (this.m_CurrentState == StateManager.WORKRUNNING)
+        {
+            this.PlayAudio(backgroundMusic, shouldLoop, SaveSetting.savedIsSoundOn, 0.05);
+            this.PlayAudio(crowdNoise, shouldLoop, SaveSetting.savedIsSoundOn, 0.2);
+            this.HandleComboCalls(MuaythaiBasic);
+
+            if (this.m_RemainingTime === this.m_RoundDuration)
+            {
+                this.PlayAudio(roundStartSound, !shouldLoop);
+            }
+            if (this.m_RemainingTime < 2)
+            {
+                this.PlayAudio(roundEndSound, !shouldLoop);
+            }
+        }
+
+        if (this.m_CurrentState == StateManager.RESTRUNNING)
+        {
+            this.PauseAudio(backgroundMusic);
+        }
+    }
+
+    PauseTimer()
+    {
+        currentClickCount++;
+        if (this.m_CurrentState != StateManager.PAUSEROUND)
+        {
+            this.m_CurrentState = StateManager.PAUSEROUND;
+            currentClickCount = 0;
+        }
+        this.CheckClickCount();
     }
 
     TimerStateManager()
@@ -289,7 +328,6 @@ class Timer
         switch (this.m_CurrentState)
         {
             case StateManager.INITIALSTATE:
-                randomIndex = 0;
                 this.InitializeTimer();
 
                 break;
@@ -313,7 +351,7 @@ class Timer
                 break;
         }
 
-        this.HandleAudioStates();
+        this.AudioStateManager();
     }
 
     CheckClickCount()
@@ -329,13 +367,13 @@ function CheckFirstLoad()
 {
     if (localStorage.getItem('first-load') == null)
     {
-        savedDurationSeconds = SaveSetting.ConvertToSeconds(savedDefaultAmount);
-        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(savedDefaultAmount);
-        savedNumberOfRounds = savedDefaultAmount;
+        savedDurationSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedDefualtAmount);
+        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedDefualtAmount);
+        savedNumberOfRounds = SaveSetting.savedDefualtAmount;
         localStorage.setItem('first-load', 'true');
-        localStorage.setItem('saved-round-amount', savedDefaultAmount);
-        localStorage.setItem('saved-duration', savedDefaultAmount);
-        localStorage.setItem('saved-rest-time', savedDefaultAmount);
+        localStorage.setItem('saved-round-amount', SaveSetting.savedDefualtAmount);
+        localStorage.setItem('saved-duration', SaveSetting.savedDefualtAmount);
+        localStorage.setItem('saved-rest-time', SaveSetting.savedDefualtAmount);
     }
     else
     {
