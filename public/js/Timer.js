@@ -1,13 +1,21 @@
+
+
+
 const timerDisplay = document.getElementById('time');
 const timerLabel = document.getElementById('timer-label');
 const startButton = document.getElementById('start-Btn');
 const pauseButton = document.getElementById('pause-Btn');
 const resumeButton = document.getElementById('resume-Btn');
 const resetButton = document.getElementById('reset-Btn');
-const settingButton = document.getElementById('setting-Btn');
 
 
-const StateManager = Object.freeze({INITIALSTATE: 0, WORKRUNNING: 1, RESTRUNNING: 2, PAUSEROUND: 3, RESUMEROUND: 4});
+const StateManager = Object.freeze({
+    INITIALSTATE: 0,
+    WORKRUNNING: 1,
+    RESTRUNNING: 2,
+    PAUSEROUND: 3,
+    RESUMEROUND: 4,
+});
 
 const TimerLabelText = Object.freeze({
     IDLETXT: 'ARE YOU READY?',
@@ -15,7 +23,11 @@ const TimerLabelText = Object.freeze({
     RESTTXT: 'REST',
 });
 
-const FontColor = Object.freeze({GREEN: '#6FCF97', RED: '#E57373', DEFUALT: '#e6e1d8'});
+const FontColor = Object.freeze({
+    GREEN: '#6FCF97',
+    RED: '#E57373',
+    DEFUALT: '#e6e1d8',
+});
 
 const backgroundMusic = new Audio('./audio/music.mp3');
 
@@ -25,7 +37,9 @@ const BoxerBasicAudio = [
     new Audio('/audio/boxing-basic/3-leed-hook.mp3'),
     new Audio('/audio/boxing-basic/4-rear-uppercut.mp3'),
     new Audio('/audio/boxing-basic/5-leed-uppercut.mp3'),
-    new Audio('/audio/boxing-basic/6-rear-hook.mp3')
+    new Audio('/audio/boxing-basic/6-rear-hook.mp3'),
+    new Audio('/audio/boxing-basic/slip.mp3'),
+    new Audio('/audio/boxing-basic/roll.mp3'),
 ];
 
 const MuaythaiBasic = [
@@ -36,21 +50,23 @@ const MuaythaiBasic = [
     new Audio('/audio/basics-thai/5.mp3'),
     new Audio('/audio/basics-thai/6.mp3'),
     new Audio('/audio/basics-thai/7.mp3'),
-
-
 ];
 
 const SaveSetting = {
     savedRoundDurationMins: localStorage.getItem('saved-duration'),
     savedRestTimeMins: localStorage.getItem('saved-rest-time'),
     savedNumberOfRounds: localStorage.getItem('saved-round-amount'),
-    savedIsSoundOn: localStorage.getItem('music-checkbox'),
     savedDefualtAmount: localStorage.getItem('save-default-amount'),
+    savedIsSoundOn: localStorage.getItem('saved-music-sound'),
+    savedCrowdNoise: localStorage.getItem('saved-crowd-sound'),
+    savedSoundNoise: localStorage.getItem('saved-sound-sound'),
+    savedStyle: localStorage.getItem('saved-style'),
+
 
     ConvertToSeconds(duration) {
         return duration * 60;
-    }
-}
+    },
+};
 
 const roundStartSound = new Audio('/audio/sfx/boxing-bell.mp3');
 const roundEndSound = new Audio('/audio/sfx/boxing-bell-single.mp3');
@@ -67,7 +83,6 @@ let hasRun;
 let currentDelayTime = 1;
 let maxDelayTime = 4;
 let maxClickAllowed = 1;
-
 
 /*                      ////////// Timer Class Formatting //////////
         -- Any variable with m_[VariableName] is a member of the class and
@@ -92,6 +107,7 @@ class Timer
     {
         hasRun = false;
         currentClickCount = 0;
+        timerDisplay.textContent = this.FormatTimerText(this.m_RoundDuration);
         timerDisplay.style.color = FontColor.DEFUALT;
         startButton.classList.remove('hidden');
         resumeButton.classList.add('hidden');
@@ -99,7 +115,7 @@ class Timer
         this.m_RoundCounter = 1;
         this.m_RemainingTime = this.m_RoundDuration;
         this.m_RemainingRestTime = this.m_RoundRestTime;
-        timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+        timerDisplay.textContent = this.FormatTimerText(this.m_RoundDuration);
         timerLabel.textContent = TimerLabelText.IDLETXT;
         clearInterval(timerInterval);
     }
@@ -120,6 +136,7 @@ class Timer
     HandleWorkTimer()
     {
         this.m_RemainingTime--;
+        timerDisplay.style.color = FontColor.GREEN;
         timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
         timerDisplay.style.color = FontColor.GREEN;
         timerLabel.textContent = TimerLabelText.RUNNINGTXT;
@@ -155,7 +172,6 @@ class Timer
         }
     }
 
-
     HandleNextRound()
     {
         timerDisplay.textContent = this.FormatTimerText(this.m_RoundDuration);
@@ -174,7 +190,6 @@ class Timer
         clearInterval(timerInterval);
         pauseButton.classList.add('hidden');
         resumeButton.classList.remove('hidden');
-        console.log
     }
 
     HandleResumeRound()
@@ -184,28 +199,42 @@ class Timer
         this.m_RoundCounter = this.m_CurrentRound;
         this.m_CurrentState = StateManager.WORKRUNNING;
         timerDisplay.style.color = FontColor.GREEN;
-        console.log('TEST');
         currentClickCount = 0;
         pauseButton.classList.remove('hidden');
         resumeButton.classList.add('hidden');
     }
 
-    HandleComboCalls(audioArr)
+    HandleComboCalls(audioArr1, audioArr2)
     {
-        if (currentDelayTime < maxDelayTime)
+        let currentAudioArr;
+        if (localStorage.getItem('saved-sound-sound') == true)
         {
-            currentDelayTime++;
-        }
+            if (SaveSetting.savedStyle == 'kick-boxer')
+            {
+                currentAudioArr = audioArr1;
+            }
+            else
+            {
+                currentAudioArr = audioArr2;
+            }
 
-        if (currentDelayTime == maxDelayTime)
+            if (currentDelayTime < maxDelayTime)
+            {
+                currentDelayTime++;
+            }
+
+            if (currentDelayTime == maxDelayTime)
+            {
+                randomIndex = Math.floor(Math.random() * currentAudioArr.length);
+                this.PlayAudio(currentAudioArr[randomIndex]);
+                currentDelayTime = 1;
+            }
+        }
+        else
         {
-            randomIndex = Math.floor(Math.random() * audioArr.length);
-            this.PlayAudio(audioArr[randomIndex]);
-            currentDelayTime = 1;
+            return;
         }
     }
-
-
 
     ResumeTimer()
     {
@@ -237,7 +266,6 @@ class Timer
     {
         let minutes;
         let seconds;
-
 
         minutes = Math.floor(remainingTime / 60);
         seconds = remainingTime % 60;
@@ -291,8 +319,8 @@ class Timer
         if (this.m_CurrentState == StateManager.WORKRUNNING)
         {
             this.PlayAudio(backgroundMusic, shouldLoop, SaveSetting.savedIsSoundOn, 0.05);
-            this.PlayAudio(crowdNoise, shouldLoop, SaveSetting.savedIsSoundOn, 0.2);
-            this.HandleComboCalls(MuaythaiBasic);
+            this.PlayAudio(crowdNoise, shouldLoop, SaveSetting.savedCrowdNoise, 0.2);
+            this.HandleComboCalls(MuaythaiBasic, BoxerBasicAudio);
 
             if (this.m_RemainingTime === this.m_RoundDuration)
             {
@@ -323,7 +351,6 @@ class Timer
 
     TimerStateManager()
     {
-        console.log(this.m_CurrentState);
         // WORK TIMER RUNNING STATE
         switch (this.m_CurrentState)
         {
@@ -333,7 +360,6 @@ class Timer
                 break;
 
             case StateManager.WORKRUNNING:
-
                 this.HandleWorkTimer();
                 break;
 
@@ -363,41 +389,28 @@ class Timer
     }
 }
 
-function CheckFirstLoad()
-{
-    if (localStorage.getItem('first-load') == null)
-    {
-        savedDurationSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedDefualtAmount);
-        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedDefualtAmount);
-        savedNumberOfRounds = SaveSetting.savedDefualtAmount;
-        localStorage.setItem('first-load', 'true');
-        localStorage.setItem('saved-round-amount', SaveSetting.savedDefualtAmount);
-        localStorage.setItem('saved-duration', SaveSetting.savedDefualtAmount);
-        localStorage.setItem('saved-rest-time', SaveSetting.savedDefualtAmount);
-    }
-    else
-    {
-        savedDurationSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRoundDurationMins);
-        savedRestTimeSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRestTimeMins);
-        savedNumberOfRounds = SaveSetting.savedNumberOfRounds;
-    }
-}
+
 
 ///////////////////////////**MAIN**/////////////////////////////
 //////////////////////////////////////////////////////////
 //----------------------------------------------------//
 
-CheckFirstLoad();
-const newTimer = new Timer(savedDurationSeconds, savedRestTimeSeconds, savedNumberOfRounds, StateManager.INITIALSTATE);
+savedDurationSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRoundDurationMins);
+savedRestTimeSeconds = SaveSetting.ConvertToSeconds(SaveSetting.savedRestTimeMins);
+
+
+
+const newTimer =
+    new Timer(savedDurationSeconds, savedRestTimeSeconds, SaveSetting.savedNumberOfRounds, StateManager.INITIALSTATE);
+
 newTimer.InitializeTimer();
+
 
 startButton.addEventListener('click', () => newTimer.StartTimer());
 pauseButton.addEventListener('click', () => newTimer.PauseTimer());
 resumeButton.addEventListener('click', () => newTimer.ResumeTimer());
 resetButton.addEventListener('click', () => newTimer.ResetTimer());
-settingButton.addEventListener('click', function() {
-    document.getElementById('config').classList.remove('hidden');
-});
+
 
 DebugTimer(newTimer);
 
