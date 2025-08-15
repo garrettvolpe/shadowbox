@@ -207,7 +207,7 @@ class Timer
     HandleComboCalls(audioArr1, audioArr2)
     {
         let currentAudioArr;
-        if (localStorage.getItem('saved-sound-sound') == true)
+        if (SaveSetting.savedSoundNoise == 'true')
         {
             if (SaveSetting.savedStyle == 'kick-boxer')
             {
@@ -226,13 +226,10 @@ class Timer
             if (currentDelayTime == maxDelayTime)
             {
                 randomIndex = Math.floor(Math.random() * currentAudioArr.length);
-                this.PlayAudio(currentAudioArr[randomIndex]);
+                currentAudioArr[randomIndex].play();
+                console.log('test');
                 currentDelayTime = 1;
             }
-        }
-        else
-        {
-            return;
         }
     }
 
@@ -318,8 +315,8 @@ class Timer
         }
         if (this.m_CurrentState == StateManager.WORKRUNNING)
         {
-            this.PlayAudio(backgroundMusic, shouldLoop, SaveSetting.savedIsSoundOn, 0.05);
-            this.PlayAudio(crowdNoise, shouldLoop, SaveSetting.savedCrowdNoise, 0.2);
+            this.PlayAudio(backgroundMusic, shouldLoop, SaveSetting.savedIsSoundOn, 0.1);
+            this.PlayAudio(crowdNoise, shouldLoop, SaveSetting.savedCrowdNoise, 0.3);
             this.HandleComboCalls(MuaythaiBasic, BoxerBasicAudio);
 
             if (this.m_RemainingTime === this.m_RoundDuration)

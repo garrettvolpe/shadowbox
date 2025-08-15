@@ -106,4 +106,13 @@ settingButton.addEventListener('click', function() {
     userSettings.CheckIsOn(musicCheckbox, 'saved-music-sound');
     userSettings.CheckIsOn(crowdNoiseCheckbox, 'saved-crowd-sound');
     userSettings.CheckIsOn(soundNoiseCheckbox, 'saved-sound-sound');
+
+    if (localStorage.getItem('saved-style') == 'kick-boxer')
+    {
+        kickboxerStyle.checked = true;
+    }
+    else
+    {
+        boxerStyle.checked = true;
+    }
 });
