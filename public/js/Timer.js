@@ -109,7 +109,6 @@ class Timer
         currentClickCount = 0;
         if (this.m_CurrentState == StateManager.INITIALSTATE)
         {
-            timerDisplay.style.color = FontColor.GREEN;
             startButton.classList.add('hidden');
             pauseButton.classList.remove('hidden');
             this.PlayAudio(roundStartSound);
@@ -122,6 +121,7 @@ class Timer
     {
         this.m_RemainingTime--;
         timerDisplay.textContent = this.FormatTimerText(this.m_RemainingTime);
+        timerDisplay.style.color = FontColor.GREEN;
         timerLabel.textContent = TimerLabelText.RUNNINGTXT;
         if (this.m_RemainingTime < 1)
         {
