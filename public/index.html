@@ -45,6 +45,8 @@
 
       <p class="copyright">© 2025 BBB Designs</p>
 
+      <!-- CONFIGURATION -->
+
       <div id="config" class="backdrop hidden" aria-labelledby="config-title">
         <header>
           <p><a href="/index.html"><---</a></p>
@@ -55,11 +57,11 @@
           <fieldset>
             <legend>Style</legend>
             <label>
-              <input type="radio" name="mode" value="kick-boxing" checked />
+              <input type="radio" name="mode" id="kb-style" value="kick-boxing" checked />
               Kickboxing
             </label>
             <label>
-              <input type="radio" name="mode" value="boxing" />
+              <input type="radio" name="mode" id="b-style" value="boxing" />
               Boxing
             </label>
           </fieldset>
@@ -75,6 +77,7 @@
               min="1"
               step="1"
               value="3"
+              
             />
 
             <label for="round-duration">Round Duration (minutes):</label>
@@ -84,6 +87,7 @@
               name="roundDuration"
               step="0.1"
               value="3"
+            
             />
 
             <label for="rest-time">Rest Time (minutes):</label>
@@ -93,17 +97,18 @@
               name="restTime"
               step="0.1"
               value="3"
+         
             />
           </fieldset>
 
           <fieldset>
             <legend>Audio</legend>
             <label>
-              <input type="checkbox" id="music-toggle" name="music" checked />
+              <input type="checkbox" id="music-toggle" name="music"  />
               Background Music
             </label>
             <label>
-              <input type="checkbox" id="sound-toggle" name="sound" />
+              <input type="checkbox" id="sound-toggle" name="sound" >
               Sound
             </label>
             <label>
@@ -114,10 +119,10 @@
 
           <div class="actions">
             <button
-              id="save-Btn"
+             id="save-setting-button"
               class="btn btn-main"
               type="submit"
-              id="save-setting-bttn"
+             
             >
               Save Settings
             </button>
